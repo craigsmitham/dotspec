@@ -101,8 +101,8 @@ func (md *Markdown) MetadataLocation(key string) diagnostic.Location {
 }
 
 // decode strictly decodes the frontmatter into the destination and returns its
-// validated companions.
-func (md *Markdown) decode(kind string, into TypedMetadata) ([]Companion, error) {
+// validated catalog.
+func (md *Markdown) decode(kind string, into TypedMetadata) ([]CatalogEntry, error) {
 	if md.MetadataError != nil {
 		return nil, md.MetadataError
 	}
@@ -114,8 +114,8 @@ func (md *Markdown) decode(kind string, into TypedMetadata) ([]Companion, error)
 	}
 	// Node.Decode accepts unknown keys. Check the actual destination's declared
 	// metadata fields first, including fields promoted by an inline embedding.
-	// Companions are validated separately rather than decoded.
-	allowed := map[string]bool{CompanionsField: true}
+	// Catalog entries are validated separately rather than decoded.
+	allowed := map[string]bool{SpecificationsField: true, VerificationField: true}
 	for _, f := range reflect.VisibleFields(reflect.TypeOf(into).Elem()) {
 		key, _, _ := strings.Cut(f.Tag.Get("yaml"), ",")
 		if key != "" {
@@ -129,7 +129,7 @@ func (md *Markdown) decode(kind string, into TypedMetadata) ([]Companion, error)
 			return nil, diagnostic.Error("metadata.invalid", fmt.Sprintf("invalid YAML frontmatter: unknown field %q", k.Value), diagnostic.Location{Line: k.Line + 1, Column: k.Column, Element: k.Value})
 		}
 	}
-	companions, err := md.Companions(kind)
+	catalog, err := md.Catalog(kind)
 	if err != nil {
 		return nil, err
 	}
@@ -139,7 +139,7 @@ func (md *Markdown) decode(kind string, into TypedMetadata) ([]Companion, error)
 	if expected := AuthoredType(kind); into.DocumentType() != expected {
 		return nil, diagnostic.Error("metadata.type", fmt.Sprintf("frontmatter must declare type: %s", expected), md.MetadataLocation("type"))
 	}
-	return companions, nil
+	return catalog, nil
 }
 
 func (md *Markdown) outline() *Outline {

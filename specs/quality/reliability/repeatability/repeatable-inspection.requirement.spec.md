@@ -2,10 +2,9 @@
 type: requirement-spec
 quality_attributes: [repeatability]
 id: repeatable-inspection
-companions:
-  - target: ../../../../internal/cli/quality_contracts_test.go#TestInspectionQualityContracts
-    role: verifies
-    note: CLI quality-contract tests for inspection
+verification:
+  - name: CLI quality-contract tests for inspection
+    source: ../../../../internal/cli/quality_contracts_test.go#TestInspectionQualityContracts
 ---
 
 # Repeated inspections produce equivalent reports

@@ -139,8 +139,8 @@ func (b *snapshotBuilder) resolveReferences() {
 			continue
 		}
 		targetDoc := b.byPath[targetPath]
-		if targetDoc == nil && form == "frontmatter" && specfile.NativeDefinitionFormat(targetPath) {
-			// A companion names a definition in a format dotspec indexes by keyword.
+		if targetDoc == nil && specfile.NativeDefinitionFormat(targetPath) {
+			// A reference names a definition in a format dotspec indexes by keyword.
 			line, err := specfile.NativeDefinitionAt(filepath.FromSlash(targetPath), u.Fragment)
 			switch {
 			case err != nil:
@@ -181,7 +181,7 @@ func (b *snapshotBuilder) documentForSource(id string) (string, *ParsedDocument)
 func (b *snapshotBuilder) fragmentTargets(doc *ParsedDocument, anchor string) []string {
 	var matches []string
 	for _, element := range b.snapshot.Elements {
-		if String(element, "source_document") == String(doc.Source, "id") && String(element, "authored_id") == anchor {
+		if String(element, "source_document") == String(doc.Source, "id") && (String(element, "authored_id") == anchor || (element["kind"] == "SpecificationReference" && element["anchor"] == anchor)) {
 			matches = append(matches, String(element, "id"))
 		}
 	}

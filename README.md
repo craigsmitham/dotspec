@@ -4,7 +4,7 @@ dotspec helps teams record what their software must do and why. Write requiremen
 
 ## What survives a restart?
 
-After the To-do app confirms a save, restarting it on the same database must preserve a waiting task’s expected reply and follow-up date. The report links to the Python function that tests this promise and shows whether a matching result has been recorded. [Read the requirement](examples/todo/specs/requirements/restart.requirement.spec.md#statement) · [Inspect the generated report](examples/todo/specification/requirements/preserve-tasks-across-restart.requirement.spec-report.md#companions) · [Run the restart example](https://dotspec.mintlify.site/examples/restart#run-the-two-checks).
+After the To-do app confirms a save, restarting it on the same database must preserve a waiting task’s expected reply and follow-up date. The report links to the Python function that tests this promise and shows whether a matching result has been recorded. [Read the requirement](examples/todo/specs/requirements/restart.requirement.spec.md#statement) · [Inspect the generated report](examples/todo/specification/requirements/preserve-tasks-across-restart.requirement.spec-report.md#verification) · [Run the restart example](https://dotspec.mintlify.site/examples/restart#run-the-two-checks).
 
 ## Quick start
 

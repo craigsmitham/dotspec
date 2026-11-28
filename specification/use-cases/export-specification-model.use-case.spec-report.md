@@ -166,11 +166,13 @@ defines named mappings.
 provides the existing inspection context. The source, document-content and domain
 layers are explained in [Specification model](<../../docs/reference/specification-model.md>).
 
-## Companions
+## Specification sources
 
-**Illustrated by**
+<a id="specification.export-and-offline-validation"></a>
 
-- [snapshot.txtar](<../../internal/integration/testdata/snapshot.txtar>) — Export and offline validation
+### [Export and offline validation](<../../internal/integration/testdata/snapshot.txtar>)
+
+Defines requirements.
 
 ---
 

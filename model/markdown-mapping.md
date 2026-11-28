@@ -1,6 +1,6 @@
 # Markdown mapping profile
 
-`dotspec-markdown/30` maps authored declarations to the classes and fields in the [model reference](../docs/reference/model/index.md). A `*.<kind>.spec.md` file declares one specification root with `type: <kind>-spec` and names it in the level-one heading. The root owns its nested elements. A reusable quality model is an independent reference root in `*.quality-model.md` with `type: quality-model`. Each named attribute in that file belongs to the model. The source text is normalized to UTF-8 with LF line endings and no leading byte-order mark.
+`dotspec-markdown/31` maps authored declarations to the classes and fields in the [model reference](../docs/reference/model/index.md). A `*.<kind>.spec.md` file declares one specification root with `type: <kind>-spec` and names it in the level-one heading. The root owns its nested elements. A reusable quality model is an independent reference root in `*.quality-model.md` with `type: quality-model`. Each named attribute in that file belongs to the model. The source text is normalized to UTF-8 with LF line endings and no leading byte-order mark.
 
 ## Shared mapping rules
 
@@ -44,7 +44,7 @@ Statement, rationale, exceptions and authority describe a rule. A rule can cite 
 
 ## Requirement
 
-Only a `*.requirement.spec.md` file declares a Requirement. It keeps its statement, applicability, criterion and rationale. A `**Targets:**` line under **Applies to** names its subjects. Conditions, workload, population and exclusions qualify applicability. Measure and target qualify a criterion. A quality classification is a label occurrence resolved within its governing vocabulary.
+A `*.requirement.spec.md` file declares a Markdown Requirement. A named native source can govern a set of requirements. It keeps its statement, applicability, criterion and rationale. A `**Targets:**` line under **Applies to** names its subjects. Conditions, workload, population and exclusions qualify applicability. Measure and target qualify a criterion. A quality classification is a label occurrence resolved within its governing vocabulary.
 
 ## Relationship contract
 
@@ -58,36 +58,12 @@ A quality model owns its `QualityModelAttribute` records in declaration order. A
 
 A specification or a named interface can have an **Adopts** collection. Each immediately subordinate heading names one adopted provision. In the entry’s introductory paragraph, link once to the exact clause, operation, or other identifiable provision. Give the entry two subsections. **Edition** identifies the revision or says `evolving`. **Applicability** states when the product adopts the provision. Each entry maps to a source-local `AdoptedProvision` with a pointer to the particular link occurrence. Ordinary citations elsewhere retain their own context. [Worked interface](../examples/todo/specs/personal-task-list.system.spec.md#redirect-after-an-accepted-form-submission)
 
-## Companions
+## Specification catalog
 
-Any specification can list the artifacts that carry part of its intent in another form under the frontmatter key `companions`. A reusable quality model is reference material and cannot list them. The value is a YAML sequence. Each entry is a mapping with these keys, whose values are single-line strings without surrounding spaces.
+A specification root accepts `specifications` and `verification` frontmatter lists. A specification entry has a nonempty single-line `name`, a `defines` category, a `source` locator and optional nested `verification`. A verification entry has a name and source. Names must produce distinct anchors within each list. Reusable quality models are reference material.
 
-| Key | Content |
-| --- | --- |
-| `target` | Required. A path relative to the specification or an absolute URL, with an optional `#fragment`. A fragment alone, which would point into the same specification, is rejected. |
-| `role` | Required. One of the four roles below. |
-| `note` | Optional. A short, non-empty description of what the companion covers. |
-
-| Role | Meaning | Report label |
-| --- | --- | --- |
-| `formalizes` | States the specification more precisely and must preserve its meaning, such as a property of a formal model or a schema definition. Normative. | Formalized by |
-| `illustrates` | Concrete cases that are part of the specification, such as executable examples. Normative. | Illustrated by |
-| `verifies` | A procedure for assessing the specification, such as a test or manual protocol. It is a source of evidence. Its observations are recorded separately. | Verified by |
-| `explains` | Background, rationale or design explanation. Informative. | Explained by |
-
-An unknown key is an error. The same target can appear once for each role it plays. Listing a target twice with the same role is a `companion.duplicate` finding.
-
-```yaml
-companions:
-  - target: ../../tests/acceptance.py#verify
-    role: verifies
-    note: Restart acceptance test; kills the service and compares each view's identities after it starts again
-```
-
-Each entry maps to a `Companion` element owned by the specification. `Specification.companions` lists them in authored order through declaration containment. A Companion records its `role`, its optional `note` and a `target` `SourceReference`. That reference has form `frontmatter`, its content node is the frontmatter metadata, its `context_owner` is the Companion and its `context_field` is `target`.
-
-A target resolves like any other authored link to a file, directory, Markdown heading or external locator. A fragment in a supported format names a definition found by its leading keyword. The supported formats are Quint (`.qnt`), Alloy (`.als`), TLA+ (`.tla`), Gherkin (`.feature`), Go, Python and txtar. For example, a fragment can name a Quint `val`, an Alloy `assert`, a TLA+ operator, a Gherkin scenario by its heading-style slug, a Go `func`, a Python `def` or a txtar file. A named definition resolves to the target source with rule `native-definition/1`, and the resolution records the line that declares it. A missing definition leaves the reference unresolved. Resolution establishes addressability alone. Other formats keep their own fragment meaning, which dotspec leaves unchecked. [Worked restart requirement](../examples/todo/specs/requirements/restart.requirement.spec.md)
+Each named specification maps to a `SpecificationReference` with its owner, name, category, source and document-local anchor. Link to that declaration using `#specification.<heading-style name>`. Each procedure maps to a `VerificationProcedure` owned by the subject it assesses. Both records point to the exact `frontmatter` source reference and retain the source location of the name. The owner preserves declaration order. See [Catalog a specification](../docs/cli-handbook/guides/catalog-a-specification.md) for authoring and the supported native fragments.
 
 ## Verification
 
-The `verifies` companions of a requirement supply its verification procedures. Keep any account of what a procedure exercises under **Evidence**, which retains its authored narrative. The earlier `## Verification procedures` section and a `### Verification procedures` subsection of **Criterion** are no longer recognized. Each produces a `structure.verification-procedure` error. Run observations have their own interchange document. [Recording verification results](../docs/reference/generated-specification.md#record-verification-results)
+Record procedure runs in the project's verification results. A result identifies the subject, procedure, revision, conditions, outcome and observation. [Recording verification results](../docs/reference/generated-specification.md#record-verification-results)

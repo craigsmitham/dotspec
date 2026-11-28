@@ -22,15 +22,20 @@ type ReferenceDocument struct {
 type Reference struct {
 	Destination string
 	Location    diagnostic.Location
-	// Role is the author-stated role of a frontmatter companion; authored body
-	// links have none.
-	Role string
+	// Frontmatter references retain their catalog name and classification.
+	Name, Defines, VerifiedSpecification string
 }
 
 func (o *Outline) References() *ReferenceDocument {
 	refs := &ReferenceDocument{Anchors: o.Anchors, Links: []Reference{}}
-	for _, c := range o.Companions {
-		refs.Links = append(refs.Links, Reference{Destination: c.Target, Location: c.Location, Role: c.Role})
+	add := func(e CatalogEntry, verified string) {
+		refs.Links = append(refs.Links, Reference{Destination: e.Source.Value, Location: e.Location, Name: e.Name.Value, Defines: e.Defines, VerifiedSpecification: verified})
+	}
+	for _, e := range o.Catalog {
+		add(e, "")
+		for _, proc := range e.Verification {
+			add(proc, e.Name.Value)
+		}
 	}
 	outlineLinks(o, o.AST, refs)
 	return refs

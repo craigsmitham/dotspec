@@ -217,11 +217,11 @@
     ]
   },
   {
-    "topic": "companion",
-    "title": "Companions",
-    "description": "List the formal models, examples, tests and notes that carry part of a specification's intent, and declare the authority of each.",
+    "topic": "catalog",
+    "title": "Specification sources",
+    "description": "Name the source that governs a set of decisions and associate verification procedures with the promise they assess.",
     "synonyms": [
-      "companions",
+      "specification sources",
       "formal model",
       "executable specification",
       "quint",
@@ -234,17 +234,17 @@
     ],
     "pages": [
       {
-        "page": "docs/cli-handbook/guides/list-a-companion.md",
+        "page": "docs/cli-handbook/guides/catalog-a-specification.md",
         "rules": {
-          "companion.invalid": "correct-the-shape-of-an-entry",
-          "companion.role": "give-each-companion-a-role",
-          "companion.duplicate": "remove-a-repeated-entry",
-          "companion.unlisted": "claim-an-unlisted-model-or-feature-file",
-          "structure.verification-procedure": "move-a-verification-procedure-into-companions"
+          "catalog.invalid": "resolve-a-finding",
+          "catalog.duplicate": "resolve-a-finding",
+          "catalog.unlisted": "resolve-a-finding",
+          "catalog.unchecked": "resolve-a-finding",
+          "structure.verification-procedure": "resolve-a-finding"
         }
       },
       {
-        "page": "docs/cli-handbook/explanations/companions.md"
+        "page": "docs/cli-handbook/explanations/specification-sources.md"
       }
     ]
   }

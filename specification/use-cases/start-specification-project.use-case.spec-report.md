@@ -102,11 +102,13 @@ isolation requirement defines what it declares.
 The [init command](<../../docs/reference/cli.md#dotspec-init>) and the linked
 requirements define command behavior.
 
-## Companions
+## Specification sources
 
-**Illustrated by**
+<a id="specification.starting-a-project-refusing-to-overwrite-and-starting-one-inside-another"></a>
 
-- [init.txtar](<../../internal/integration/testdata/init.txtar>) — Starting a project, refusing to overwrite, and starting one inside another
+### [Starting a project, refusing to overwrite, and starting one inside another](<../../internal/integration/testdata/init.txtar>)
+
+Defines requirements.
 
 ---
 

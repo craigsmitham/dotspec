@@ -5,58 +5,28 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
-	"strings"
 	"testing"
 
 	"github.com/dotspec-md/dotspec/internal/diagnostic"
 )
 
-func TestCompanionFrontmatter(t *testing.T) {
-	spec := func(frontmatter string) []byte {
-		return []byte("---\ntype: requirement-spec\n" + frontmatter + "---\n# Keep\n## Statement\nKeep it.\n")
-	}
-	outline, err := NewMarkdown(spec("companions:\n  - target: ../models/tasks.qnt#exactlyOneView\n    role: formalizes\n    note: Task lifecycle\n  - {target: https://example.com/doc, role: explains}\n")).TypedOutline("requirement", &Metadata{})
-	if err != nil {
-		t.Fatal(err)
-	}
-	want := []Companion{
-		{Target: "../models/tasks.qnt#exactlyOneView", Role: "formalizes", Location: diagnostic.Location{Line: 4, Column: 13, Element: CompanionsField}},
-		{Target: "https://example.com/doc", Role: "explains", Location: diagnostic.Location{Line: 7, Column: 14, Element: CompanionsField}},
-	}
-	if !reflect.DeepEqual(outline.Companions, want) {
-		t.Fatalf("%#v", outline.Companions)
-	}
-	links := outline.References().Links
-	if len(links) < 2 || links[0].Destination != want[0].Target || links[0].Location != want[0].Location || links[1].Destination != want[1].Target {
-		t.Fatalf("companion targets must be ordinary references: %#v", links)
-	}
-
-	for _, c := range []struct{ frontmatter, rule, message string }{
-		{"companions: models/tasks.qnt\n", "companion.invalid", "YAML sequence"},
-		{"companions:\n  - models/tasks.qnt\n", "companion.invalid", "mapping"},
-		{"companions:\n  - role: formalizes\n", "companion.invalid", "target"},
-		{"companions:\n  - target: x.qnt\n", "companion.role", "Give each companion a role"},
-		{"companions:\n  - target: x.qnt\n    role: proves\n", "companion.role", `"proves"`},
-		{"companions:\n  - target: x.qnt\n    role: formalizes\n    kind: quint\n", "companion.invalid", `"kind"`},
-		{"companions:\n  - target: '#statement'\n    role: explains\n", "companion.invalid", "another file"},
-		{"companions:\n  - target: x.qnt\n    role: formalizes\n    note: ''\n", "companion.invalid", "empty note"},
-		{"companions:\n  - target: x.qnt\n    role: formalizes\n    note: |\n      two\n      lines\n", "companion.invalid", "single-line"},
-		{"companions:\n  - target: [x.qnt]\n    role: formalizes\n", "companion.invalid", "single-line text"},
-		{"companions:\n  - target: x.qnt\n    role: verifies\n  - target: x.qnt\n    role: verifies\n", "companion.duplicate", "already lists"},
+func TestCatalogFrontmatter(t *testing.T) {
+	for _, c := range []struct{ field, rule string }{
+		{"specifications: never", "catalog.invalid"},
+		{"verification: [broken]", "catalog.invalid"},
+		{"specifications: [{name: x, source: x}]", "catalog.invalid"},
+		{"specifications: [{name: x, source: x, defines: gherkin}]", "catalog.invalid"},
+		{"verification: [{name: x, source: '#statement'}]", "catalog.invalid"},
+		{"verification: [{name: x, source: []}]", "catalog.invalid"},
+		{"verification: [{name: x, source: a, role: verifies}]", "catalog.invalid"},
+		{"verification: [{name: x, source: a}, {name: X, source: b}]", "catalog.duplicate"},
+		{"companions: []", "metadata.invalid"},
 	} {
-		_, err := NewMarkdown(spec(c.frontmatter)).TypedOutline("requirement", &Metadata{})
+		_, err := NewMarkdown([]byte("---\ntype: requirement-spec\n"+c.field+"\n---\n# Keep\n")).TypedOutline("requirement", &Metadata{})
 		var d *diagnostic.Diagnostic
-		if !errors.As(err, &d) || d.Rule != c.rule || !strings.Contains(d.Message, c.message) || d.Location.Element != CompanionsField {
-			t.Errorf("%q: %v", c.frontmatter, err)
+		if !errors.As(err, &d) || d.Rule != c.rule || d.Location.Line != 3 {
+			t.Errorf("%q: %v", c.field, err)
 		}
-	}
-	// The same target can serve two roles, such as a model that also checks itself.
-	if _, err := NewMarkdown(spec("companions:\n  - target: x.qnt\n    role: formalizes\n  - target: x.qnt\n    role: verifies\n")).TypedOutline("requirement", &Metadata{}); err != nil {
-		t.Fatal(err)
-	}
-	model := []byte("---\ntype: quality-model\ncompanions:\n  - target: x.md\n    role: explains\n---\n# Model\n")
-	if _, err := NewMarkdown(model).TypedOutline("quality-model", &Metadata{}); err == nil || !strings.Contains(err.Error(), "reference material") {
-		t.Fatal(err)
 	}
 }
 

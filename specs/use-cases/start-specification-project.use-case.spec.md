@@ -1,10 +1,10 @@
 ---
 type: use-case-spec
 id: start-specification-project
-companions:
-  - target: ../../internal/integration/testdata/init.txtar
-    role: illustrates
-    note: Starting a project, refusing to overwrite, and starting one inside another
+specifications:
+  - name: Starting a project, refusing to overwrite, and starting one inside another
+    defines: requirements
+    source: ../../internal/integration/testdata/init.txtar
 ---
 
 # Start a specification project

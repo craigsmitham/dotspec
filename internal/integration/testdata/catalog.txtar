@@ -1,0 +1,143 @@
+# One suite owns multiple requirements; another specification can cite either
+# the catalog declaration or a scenario, without duplicating the suite.
+env HOME=$WORK/home
+env XDG_CACHE_HOME=$WORK/home/cache
+mkdir home project
+cd project
+exec git init -q
+cp ../manifest dotspec.yaml
+mkdir specs specs/features specs/requirements acceptance policy
+cp ../system.md specs/project.system.spec.md
+cp ../feature.md specs/features/waiting.feature.spec.md
+cp ../requirement.md specs/requirements/review.requirement.spec.md
+cp ../suite acceptance/follow-up.feature
+cp ../run.py acceptance/run.py
+cp ../table policy/eligibility.csv
+cp ../schema api.json
+cp ../results verification-results.json
+cp ../observation run.log
+status 0 dotspec build
+status 0 dotspec check
+stdout 'catalog.unlisted'
+stdout 'eligibility.csv'
+stdout 'External locator recorded'
+stdout 'Its native fragment was not inspected'
+! stdout 'reference.unresolved'
+exec cat specification/features/waiting.feature.spec-report.md
+stdout 'Follow-up timing.*acceptance/follow-up.feature'
+stdout 'Check timing.*acceptance/run.py#L1'
+stdout 'Matching observation · pass'
+exec cat specification/project.system.spec-report.md
+stdout '## Requirements'
+stdout 'Follow-up timing.*waiting.feature.spec-report.md#specification.follow-up-timing'
+stdout 'Review'
+exec cat specification/specifications.md
+stdout 'Follow-up timing'
+status 0 dotspec sources acceptance/follow-up.feature
+stdout 'Defines requirements: Follow-up timing · specs/features/waiting.feature.spec.md'
+stdout 'Referenced by specs/requirements/review.requirement.spec.md'
+! stdout '^acceptance/run.py$'
+status 0 dotspec sources --json
+stdout '"defines": "requirements"'
+stdout '"verified_specification": "Follow-up timing"'
+status 0 dotspec snapshot export
+stdout '"kind": "SpecificationReference"'
+stdout '"kind": "VerificationProcedure"'
+stdout '"rule": "native-definition/1"'
+cp stdout snapshot.json
+status 0 dotspec snapshot validate snapshot.json
+status 0 dotspec check
+exec cat ../suite ../additional-case
+cp stdout acceptance/follow-up.feature
+status 0 dotspec check
+cmp specs/features/waiting.feature.spec.md ../feature.md
+cp ../renamed acceptance/follow-up.feature
+status 1 dotspec check
+stdout 'review.requirement.spec.md'
+stdout 'names no definition "due-today"'
+cp ../suite acceptance/follow-up.feature
+rm acceptance/run.py
+status 1 dotspec check
+stdout 'waiting.feature.spec.md'
+stdout 'missing file'
+-- manifest --
+name: project
+specification_patterns: ["policy/*.csv"]
+-- system.md --
+---
+type: system-spec
+---
+# Project
+## Purpose
+Support waiting.
+## Scope
+A personal list.
+-- feature.md --
+---
+type: feature-spec
+specifications:
+  - name: Follow-up timing
+    defines: requirements
+    source: ../../acceptance/follow-up.feature
+    verification:
+      - name: Check timing
+        source: ../../acceptance/run.py#check
+  - name: Export format
+    defines: contracts
+    source: ../../api.json#/schema
+  - name: Shared interface
+    defines: contracts
+    source: https://example.invalid/contract
+---
+# Waiting
+## Purpose
+Show which replies need attention.
+-- requirement.md --
+---
+type: requirement-spec
+---
+# Review
+## Statement
+Review [follow-up timing](../features/waiting.feature.spec.md#specification.follow-up-timing) when displaying [today's cases](../../acceptance/follow-up.feature#due-today).
+-- suite --
+Feature: Follow-up
+  Scenario: Due today
+    Given an owner is waiting for a reply due today
+    When the owner opens Waiting
+    Then the cue reads "Follow up now"
+
+  Scenario Outline: Review a chosen date
+    Given the chosen date is <offset> days from today
+    When the owner opens Waiting
+    Then the cue reads <cue>
+
+    Examples:
+      | offset | cue           |
+      |     -9 | Follow up now |
+      |     -7 | Follow up now |
+      |     -3 | Follow up now |
+      |     -2 | Follow up now |
+      |     -1 | Follow up now |
+      |      1 | Upcoming      |
+      |      2 | Upcoming      |
+      |      3 | Upcoming      |
+      |      7 | Upcoming      |
+      |     10 | Upcoming      |
+      |     30 | Upcoming      |
+-- additional-case --
+      |    365 | Upcoming      |
+-- renamed --
+Feature: Follow-up
+  Scenario: Later today
+-- run.py --
+def check():
+    pass
+-- table --
+value,eligible
+1,true
+-- results --
+{"selection":{"product_revision":"abc","conditions":"local"},"results":[{"subject":"specs/features/waiting.feature.spec.md#specification.follow-up-timing","procedure":"acceptance/follow-up.feature","product_revision":"abc","conditions":"local","outcome":"pass","observation":"run.log"}]}
+-- observation --
+Follow-up cases passed on revision abc.
+-- schema --
+{"schema":{"type":"object"}}

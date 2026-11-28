@@ -38,10 +38,10 @@ func (v *graphValidator) checkDomain() {
 				v.add("adoption.provision", path+"/provision", "expected the provision link authored in this adoption")
 			}
 		}
-		if kind == "Companion" {
-			ref := v.records[String(r, "target")].value
-			if ref["context_field"] != "target" || ref["context_owner"] != r["id"] || ref["form"] != "frontmatter" {
-				v.add("companion.target", path+"/target", "expected the frontmatter target authored in this companion entry")
+		if kind == "SpecificationReference" || kind == "VerificationProcedure" {
+			ref := v.records[String(r, "source")].value
+			if ref["context_field"] != "source" || ref["context_owner"] != r["id"] || ref["form"] != "frontmatter" {
+				v.add("catalog.source", path+"/source", "expected the frontmatter source authored in this catalog entry")
 			}
 		}
 		if kind == "SystemQualityAttribute" {

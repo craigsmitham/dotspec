@@ -27,15 +27,9 @@ The owner can return after closing a tab while the service is still running. A w
 
 The [form acceptance test](<../../tests/acceptance.py>) returns to Open, Waiting and Completed while the service is still running, after entries have been completed, reopened and deleted. Each view shows exactly the entries in that state, once each. After a waiting entry is deleted, a new entry with the same title gets a different identity, and the deleted entry’s old Resume form reports that it is no longer on the list. [Preserve tasks across restart](<preserve-tasks-across-restart.requirement.spec-report.md#evidence>) covers a return after the service stops.
 
-## Companions
-
-**Verified by**
-
-- [README.md › run-the-app](<../../README.md#run-the-app>) — Exercise the forms across list views
-
 ## Verification
 
-Procedure linked.
+- [Exercise the forms across list views](<../../README.md#run-the-app>)
 
 No matching result recorded.
 

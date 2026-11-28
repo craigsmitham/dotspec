@@ -69,7 +69,7 @@ func sentenceCase(slot string) string {
 // SectionSlot names the slot a level heading titled title introduces in class,
 // and reports whether class accepts that heading as one of its sections.
 func SectionSlot(class, title string) (string, bool) {
-	schema, ok := classSlots()[class]
+	schema, ok := schemaCatalog().Classes[class]
 	if !ok {
 		return "", false
 	}
@@ -90,7 +90,7 @@ func SectionSlot(class, title string) (string, bool) {
 	return slot, true
 }
 
-const verificationProcedureAdvice = "List each verification procedure as a companion with role: verifies in the frontmatter, and keep any account of what it exercises under Evidence."
+const verificationProcedureAdvice = "List each verification procedure under verification in the frontmatter, and keep any account of what it exercises under Evidence."
 
 var collectionKinds = map[string]string{
 	"Adopts": "AdoptedProvision", "Stakeholders": "SystemStakeholderRole",
@@ -105,14 +105,17 @@ func IsCollectionHeading(title string) bool {
 	return collectionKinds[title] != ""
 }
 
-var classSlots = sync.OnceValue(func() map[string]struct{ Slots map[string]json.RawMessage } {
-	var catalog struct {
-		Classes map[string]struct{ Slots map[string]json.RawMessage }
-	}
+type authoringCatalog struct {
+	Classes map[string]struct{ Slots map[string]json.RawMessage }
+	Enums   map[string][]string
+}
+
+var schemaCatalog = sync.OnceValue(func() authoringCatalog {
+	var catalog authoringCatalog
 	if err := json.Unmarshal(schema.CatalogJSON, &catalog); err != nil {
 		panic(err)
 	}
-	return catalog.Classes
+	return catalog
 })
 
 var documentRootClasses = map[string]string{
@@ -148,7 +151,7 @@ var reportTypes = sync.OnceValue(func() map[string]string {
 		Ranges []string `json:"reference_ranges"`
 	}
 	types := map[string]string{}
-	for _, class := range classSlots() {
+	for _, class := range schemaCatalog().Classes {
 		var documents, typ slot
 		if class.Slots["documents"] == nil || class.Slots["type"] == nil {
 			continue
@@ -171,7 +174,7 @@ func ReportType(kind string) string { return reportTypes()[kind] }
 
 func (o *Outline) checkFields(class string, sections []*Section, level int) error {
 	// Independently registered types own their authoring contracts.
-	if _, builtIn := classSlots()[class]; !builtIn {
+	if _, builtIn := schemaCatalog().Classes[class]; !builtIn {
 		return nil
 	}
 	for _, s := range sections {

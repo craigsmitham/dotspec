@@ -72,7 +72,7 @@ Commands must work without interactive prompts.
   then one summary line with the scope, completeness and counts, then the context
   files. A blocked `build` leads with `SPEC.md not written: N source errors`.
   `sources` names each project once, above the files it contains, and prints a
-  companion entry with the role its specification states rather than as a bare
+  named source or procedure with its declared purpose rather than as a bare
   reference.
 - Fang styles terminal help; Lip Gloss styles errors without probing stdout.
   Pipes and `NO_COLOR` use plain Cobra help.

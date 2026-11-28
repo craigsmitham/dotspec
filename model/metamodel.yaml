@@ -316,7 +316,7 @@ classes:
       model_version:
         range: string
         required: true
-        equals_string: 0.36.0-draft
+        equals_string: 0.37.0-draft
       mapping_profile:
         range: string
         description: Versioned rules for mapping declared sections, metadata and references.
@@ -688,7 +688,7 @@ classes:
       declares one root and can contain addressable parts. The specifications in product scope and their
       relationships compose the product specification.
     annotations:
-      owned_memberships: Specification.adopts or Specification.companions
+      owned_memberships: Specification.adopts or Specification.specifications or Specification.verification
     attributes:
       adopts:
         range: AdoptedProvision
@@ -697,15 +697,20 @@ classes:
         annotations:
           relationship_category: declaration-containment
           relationship_inverse: AdoptedProvision.owner
-      companions:
-        range: Companion
+      specifications:
+        range: SpecificationReference
         multivalued: true
         list_elements_ordered: true
-        description: Artifacts that carry part of this specification's intent in another form, in authored
-          frontmatter order.
         annotations:
           relationship_category: declaration-containment
-          relationship_inverse: Companion.owner
+          relationship_inverse: SpecificationReference.owner
+      verification:
+        range: VerificationProcedure
+        multivalued: true
+        list_elements_ordered: true
+        annotations:
+          relationship_category: declaration-containment
+          relationship_inverse: VerificationProcedure.owner
       related_specifications:
         range: ContextualReferences
         inlined: true
@@ -754,34 +759,66 @@ classes:
         range: RichContent
         inlined: true
         required: true
-  Companion:
-    in_subset: [software-requirements]
+  SpecificationReference:
     is_a: DomainElement
-    description: An artifact declared in a specification's frontmatter that carries part of its intent in
-      another form, such as a formal model, an executable example, a test or an explanatory document. The role
-      states the relationship; neither a link nor a passing check confers authority, conformance or satisfaction.
+    in_subset: [software-requirements]
+    description: A named declaration of the source governing a set of product decisions.
+    annotations:
+      owned_memberships: SpecificationReference.verification
     slot_usage:
       kind:
-        equals_string: Companion
+        equals_string: SpecificationReference
+      name:
+        required: true
     attributes:
       owner:
         range: Specification
         required: true
         annotations:
           relationship_category: declaration-containment
-          relationship_inverse: Specification.companions
-      target:
+          relationship_inverse: Specification.specifications
+      defines:
+        range: SpecificationCategory
+        required: true
+      anchor:
+        range: string
+        required: true
+      source:
         range: SourceReference
         required: true
         annotations:
           relationship_category: provenance
-          relationship_basis: The frontmatter target occurrence of this companion entry.
-      role:
-        range: CompanionRole
+      verification:
+        range: VerificationProcedure
+        multivalued: true
+        list_elements_ordered: true
+        annotations:
+          relationship_category: declaration-containment
+          relationship_inverse: VerificationProcedure.owner
+  VerificationProcedure:
+    is_a: DomainElement
+    in_subset: [software-requirements]
+    description: A named procedure for assessing its owning specification or native definition.
+    slot_usage:
+      kind:
+        equals_string: VerificationProcedure
+      name:
         required: true
-      note:
-        range: string
-        description: Optional single-line description written faithfully to the companion.
+    attributes:
+      owner:
+        range: DomainElement
+        any_of:
+        - range: Specification
+        - range: SpecificationReference
+        required: true
+        annotations:
+          relationship_category: declaration-containment
+          relationship_inverse: Specification.verification or SpecificationReference.verification
+      source:
+        range: SourceReference
+        required: true
+        annotations:
+          relationship_category: provenance
   SystemContextSpecification:
     in_subset:
     - business-requirements
@@ -1978,7 +2015,7 @@ classes:
       line:
         range: integer
         minimum_value: 1
-        description: Line declaring the named definition in a native companion, for a resolved native-definition/1
+        description: Line declaring the named definition in a native specification source, for a resolved native-definition/1
           reference.
       diagnostics:
         range: Diagnostic
@@ -2448,19 +2485,20 @@ enums:
         description: External locator.
       frontmatter:
         description: Locator authored as a YAML frontmatter value.
-  CompanionRole:
-    description: How a companion relates to the specification that declares it.
+  SpecificationCategory:
+    description: The kind of product intent governed by a named source.
     permissible_values:
-      formalizes:
-        description: States the specification more precisely and must preserve its meaning, such as a formal
-          model property or a schema definition. Normative.
-      illustrates:
-        description: Concrete cases that are part of the specification, such as executable examples. Normative.
-      verifies:
-        description: A procedure for assessing the specification, such as a test suite or manual protocol. A
-          source of evidence; its observations are recorded separately.
-      explains:
-        description: Background, rationale or design explanation. Informative.
+      systems: {}
+      components: {}
+      jobs: {}
+      capabilities: {}
+      features: {}
+      business-rules: {}
+      use-cases: {}
+      concepts: {}
+      requirements: {}
+      quality-attributes: {}
+      contracts: {}
   ResolutionStatus:
     description: Resolution results, not extraction/decomposition states.
     permissible_values:

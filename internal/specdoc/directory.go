@@ -226,9 +226,6 @@ func (p *planner) renderIndex(owner *subject, title string, idx *collectionIndex
 	if title == "Glossary" {
 		p.renderGlossary(w, owner)
 	}
-	if title == "Companions" {
-		p.renderCompanionIndex(w, owner)
-	}
 	renderIndexMembers(w, title, idx.members)
 	for _, passage := range idx.passages {
 		p.renderPassage(w, owner, passage, 1+owner.name.level-passage[0].level, false)

@@ -137,7 +137,7 @@ Examples of diagnostic rules include the following.
 | `structure.title`, `structure.section-order`, `structure.required-section`, `structure.duplicate-section`, `structure.section-level`, `structure.duplicate-field` | Required document structure and unambiguous definitions. |
 | `identity.invalid`, `identity.duplicate` | Explicit ID syntax and uniqueness within one document. |
 | `reference.invalid`, `reference.unresolved`, `reference.boundary` | Local reference syntax, target resolution, and repository boundaries. |
-| `companion.invalid`, `companion.role`, `companion.duplicate`, `companion.unlisted` | Frontmatter companion shape, role, uniqueness, and advice for an unlisted model or feature file. |
+| `catalog.invalid`, `catalog.duplicate`, `catalog.unlisted`, `catalog.unchecked` | Declaration shape, name collisions, candidate files and uninspected locators. |
 | `job.statement`, `job.performer`, `job.outcome-empty` | Advice about a missing job statement, performer, or outcome statement. |
 | `use-case.goal`, `use-case.system-boundary`, `use-case.primary-actor`, `use-case.goal-level`, `use-case.success-guarantees`, `use-case.main-success-scenario`, `use-case.extensions`, `use-case.sequence` | Advice about missing use-case content or scenario order. |
 | `concept.purpose`, `concept.state`, `concept.actions`, `concept.operational-principle` | Advice about missing concept content. |
@@ -170,23 +170,11 @@ These scripts specify required outcomes for the illustrated command inputs:
 - [Discovery behavior](../../testdata/discovery.txtar)
 ```
 
-A file that a specification lists in its frontmatter `companions` also shows the role that specification states for it. The To-do [restart requirement](../../examples/todo/specs/requirements/restart.requirement.spec.md#evidence) lists its acceptance test as a `verifies` companion and links to it under Evidence. Run from `examples/todo`, the inventory includes the test once, with every specification that links to it. The restart requirement appears twice, once for its companion entry and role and once for its Evidence link:
-
-```text
-tests/acceptance.py
-  Referenced by app/specs/requirements/acknowledge-after-commit.requirement.spec.md:33:5 (../../../tests/acceptance.py)
-  Referenced by specs/requirements/availability.requirement.spec.md:29:5 (../../tests/acceptance.py)
-  Referenced by specs/requirements/follow-up.requirement.spec.md:36:5 (../../tests/acceptance.py)
-  Companion that verifies specs/requirements/restart.requirement.spec.md:5:13 (../../tests/acceptance.py#verify)
-  Referenced by specs/requirements/restart.requirement.spec.md:49:5 (../../tests/acceptance.py)
-```
-
-The role is the author's declaration. dotspec reports it as written and does not judge whether the file formalizes, illustrates, verifies or explains the specification. [What does a companion add to a specification?](../cli-handbook/explanations/companions.md)
+A declaration reports its name, the referring specification's location and its authored source. A governing source also reports its category. The [restart requirement](../../examples/todo/specs/requirements/restart.requirement.spec.md#evidence) declares a verification procedure and cites its Python file in Evidence. The source inventory shows both occurrences beside the same file.
 
 The command uses the same scan, diagnostics, reference rules, and exit statuses
 as `check`, including advisory findings. Results go to stdout even when the scan
-fails. Invocation and output errors go to stderr. A `<path>` operand selects a directory
-subtree, not a declaration that every source applies to one system.
+fails. Invocation and output errors go to stderr. A directory operand selects a subtree. A regular-file operand shows its incoming references across the enclosing project and includes its canonical path as `selected_file` in JSON. For a shared file outside a project the lookup uses the project of the invoking directory.
 
 The version-1 JSON result has these fields:
 
@@ -195,24 +183,11 @@ The version-1 JSON result has these fields:
 | `schema_version` | `1`, always the first key. |
 | `scope` | The same resolved path, supported types, and discovery mode as `check`. |
 | `complete` | Whether the scan completed, independently of structural findings. |
-| `files` | Existing regular files, sorted by absolute path, each with `path`, `referenced_by` and `companion_of`. |
+| `files` | Existing regular files, sorted by absolute path, each with `path`, `referenced_by` and `declarations`. |
 | `diagnostics` | The same findings and location format as `check`. |
 
-Each `referenced_by` entry is the referring spec's location, including its path,
-line, column, and authored link destination in `element`. For a frontmatter
-companion, `element` is `companions` and the location points at the entry's
-target value. Each `companion_of` entry is one frontmatter companion entry that targets the
-file: its `role` (`formalizes`, `illustrates`, `verifies` or `explains`), its
-authored `target`, including any `#definition` fragment, and the `location` of
-the entry, whose `path` is the declaring specification. The same location also
-appears in `referenced_by`. A specification that lists a file under two roles
-contributes two entries. Both arrays are sorted by
-path and source position. Files appear once even if several specs reference them;
-multiple authored link locations are retained. Empty collections are `[]`.
-Discovered specs and consulted context can have an empty `referenced_by` array.
-A companion that targets a directory or an absolute URL is not a file in the
-inventory, so it appears in neither array; the generated
-[companion index](generated-specification.md#follow-a-companion) lists every entry.
+Each `referenced_by` occurrence records path, line, column and element. A frontmatter occurrence points to the source scalar. Each `declarations` entry records the name, source and location. A governing declaration also has `defines`; a nested verification procedure identifies its `verified_specification`. Ordinary contextual links appear only in `referenced_by`. Existing regular files are listed once with incoming occurrences in source order. External URLs remain in the snapshot and generated catalog.
+
 The text inventory groups files under the project that contains them, naming each
 project once, and ends with a summary line such as
 `Listed 21 source files in project todo (scan complete).`
@@ -220,12 +195,12 @@ Malformed but existing spec files remain listed; missing targets appear in
 diagnostics rather than as existing files. Do not treat a partial or failed
 inventory as proof of coverage.
 
-The inventory resolves links and companion targets by the rules in
+The inventory resolves links and named sources by the rules in
 [References](#references). A directory link does not include the directory's
 contents, and native files are not executed or parsed beyond finding the
-definition a companion fragment names.
+definition a native fragment names.
 
-To check coverage, compare the source files your project expects with `files[].path` in a complete inventory. For an absent specification, verify the selected directory, typed filename suffix, project boundary and Git ignore rules. For a missing contract or test, inspect the relative link in the referring specification and rerun `dotspec sources` after correcting it. Use `referenced_by` to find the specification that links to a test or contract, and `companion_of` to see which specifications list it as a companion and in what role.
+To check coverage, compare the source files your project expects with `files[].path` in a complete inventory. For an absent specification, verify the selected directory, typed filename suffix, project boundary and Git ignore rules. For a missing contract or test, inspect the relative link in the referring specification and rerun `dotspec sources` after correcting it. Use `referenced_by` to find the specification that links to a test or contract, and `declarations` to see which specifications declare it and what it governs or assesses.
 
 ## Output and automation
 
@@ -267,7 +242,7 @@ See the generated [CLI reference](cli.md) for flags and examples.
 
 A `structure.adoption` finding points to an entry under **Adopts**. Identify a single provision and give both its edition and local applicability. [Source mapping](../../model/markdown-mapping.md#adopting-a-provision)
 
-Every check command validates Markdown links and frontmatter companion targets
+Every check command validates Markdown links and declared sources
 in successfully parsed selected specifications and their associated system context. Same-document fragments
 are checked during parsing as well. Links inside code samples and images are
 not interpreted as specification references.
@@ -288,11 +263,7 @@ is structurally parsed, without collecting its writing advice. Invalid targets
 produce their structural diagnostic without cascading missing-fragment errors.
 
 Ordinary Markdown targets provide heading anchors without needing a dotspec
-wrapper. Other native file formats are checked for existence; a body link's
-fragment retains the owning format's semantics. A companion's fragment on a
-Quint, Alloy, TLA+, Gherkin, Go, Python or txtar target names a definition
-found by its leading keyword, and a missing name is `reference.unresolved`.
-[Name a definition](../cli-handbook/guides/list-a-companion.md#name-a-definition).
+wrapper. Supported native fragments resolve by declaration name for both named sources and contextual links. Other native fragments retain their format's semantics. [Name a definition](../cli-handbook/guides/catalog-a-specification.md#name-a-definition).
 URLs and absolute paths remain external navigation. No network requests are made.
 
 Relative links cannot cross repository/worktree boundaries, enter nested

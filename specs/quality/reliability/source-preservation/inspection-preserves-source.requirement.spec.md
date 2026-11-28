@@ -2,10 +2,9 @@
 type: requirement-spec
 quality_attributes: [source-preservation]
 id: inspection-preserves-source
-companions:
-  - target: ../../../../internal/cli/quality_contracts_test.go#TestInspectionQualityContracts
-    role: verifies
-    note: CLI quality-contract tests for inspection
+verification:
+  - name: CLI quality-contract tests for inspection
+    source: ../../../../internal/cli/quality_contracts_test.go#TestInspectionQualityContracts
 ---
 
 # Inspection preserves source material

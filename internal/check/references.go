@@ -103,11 +103,17 @@ func (r *Report) inspectReferences(sources []string, discovered map[string]bool,
 		}
 		for _, link := range doc.Links {
 			destination := link.Destination
-			if destination == "" || strings.HasPrefix(destination, "#") || strings.HasPrefix(destination, "/") || referenceScheme.MatchString(destination) {
-				continue
-			}
 			location := link.Location
 			location.Path = source
+			if destination == "" || strings.HasPrefix(destination, "#") || strings.HasPrefix(destination, "/") {
+				continue
+			}
+			if referenceScheme.MatchString(destination) {
+				if link.Name != "" {
+					r.Diagnostics = append(r.Diagnostics, diagnostic.Advice("catalog.unchecked", "External locator recorded without fetching the resource.", location))
+				}
+				continue
+			}
 			u, err := url.Parse(destination)
 			if err != nil {
 				r.Diagnostics = append(r.Diagnostics, *diagnostic.Error("reference.invalid", fmt.Sprintf("invalid reference %q", destination), location))
@@ -140,32 +146,40 @@ func (r *Report) inspectReferences(sources []string, discovered map[string]bool,
 				continue
 			}
 			if info.IsDir() {
+				if link.Name != "" {
+					r.Diagnostics = append(r.Diagnostics, *diagnostic.Error("catalog.invalid", "Point the declaration to a file or a definition in that file.", location))
+					continue
+				}
 				if u.Fragment != "" {
 					r.Diagnostics = append(r.Diagnostics, *diagnostic.Error("reference.unresolved", fmt.Sprintf("directory reference %q cannot resolve a fragment", destination), location))
 				}
 				continue
 			}
 			count(target)
-			r.collectFile(target, &specfile.Reference{Destination: destination, Location: location, Role: link.Role})
+			link.Location = location
+			r.collectFile(target, &link)
 			if location.Element == specfile.GlossarySourcesField && kind != nil && kind.Layout.Kind == "system" && !glossaries[target] {
 				glossaries[target] = true
 				sources = append(sources, target)
 			}
 			targetKind := MatchType(target, types)
 			markdown := strings.EqualFold(filepath.Ext(target), ".md") || strings.EqualFold(filepath.Ext(target), ".markdown")
-			// A companion fragment names a definition in a format dotspec can index.
+			// A native fragment names a definition in a format dotspec can index.
 			// Other native formats keep their own fragment semantics.
-			if location.Element == specfile.CompanionsField && u.Fragment != "" && targetKind == nil && !markdown && specfile.NativeDefinitionFormat(target) {
+			if u.Fragment != "" && targetKind == nil && !markdown && specfile.NativeDefinitionFormat(target) {
 				line, err := specfile.NativeDefinitionAt(target, u.Fragment)
 				if err != nil {
 					r.record(err, "scan.reference", target)
 				} else if line == 0 {
-					r.Diagnostics = append(r.Diagnostics, *diagnostic.Error("reference.unresolved", fmt.Sprintf("companion %q names no definition %q in %s", destination, u.Fragment, filepath.Base(target)), location, diagnostic.Location{Path: target}))
+					r.Diagnostics = append(r.Diagnostics, *diagnostic.Error("reference.unresolved", fmt.Sprintf("reference %q names no definition %q in %s", destination, u.Fragment, filepath.Base(target)), location, diagnostic.Location{Path: target}))
 				}
 				continue
 			}
 			// Native non-Markdown formats own their fragment semantics.
 			if targetKind == nil && (!markdown || u.Fragment == "") {
+				if link.Name != "" && u.Fragment != "" {
+					r.Diagnostics = append(r.Diagnostics, diagnostic.Advice("catalog.unchecked", "The file exists. Its native fragment was not inspected.", location))
+				}
 				continue
 			}
 			if failed[target] {

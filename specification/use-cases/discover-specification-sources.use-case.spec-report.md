@@ -73,8 +73,8 @@ selects the intended source by that path.
 ## Success guarantees
 
 The contributor receives a complete source inventory for the selected scope,
-including findings about unresolved references and, for each file a specification
-lists as a companion, the declaring specification and the role it states. They can
+including findings about unresolved references and the locations and names of
+declarations and procedures that point to each file. They can
 follow the reported paths to consult the original files in their native form.
 
 ## System boundary
@@ -97,12 +97,19 @@ whether it adequately specifies the system. The
 [contributor guide](<../../CONTRIBUTING.md#specification-tests-and-implementation-tests>) explains how
 this project assigns roles to those sources.
 
-## Companions
+## Specification sources
 
-**Illustrated by**
+<a id="specification.source-inventory-and-incoming-declarations"></a>
 
-- [sources.txtar](<../../internal/integration/testdata/sources.txtar>) — Source discovery through ordinary references and companions
-- [kinds_test.go](<../../internal/cli/kinds_test.go>) — Lists of every specification kind, grouped by system
+### [Source inventory and incoming declarations](<../../internal/integration/testdata/sources.txtar>)
+
+Defines requirements.
+
+## Verification
+
+- [Lists of every specification kind, grouped by system](<../../internal/cli/kinds_test.go>)
+
+No matching result recorded.
 
 ---
 

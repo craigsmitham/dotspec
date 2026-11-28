@@ -22,7 +22,7 @@ func TestGeneratedArtifactsAndReadOnlyDriftCheck(t *testing.T) {
 		t.Fatal(err)
 	}
 	for _, slug := range publishedGuides {
-		body := "# Test guide\n\n[Related](list-a-companion.md#choose-a-role) · [Map](../README.md)\n\n`[Example](example.md)`\n"
+		body := "# Test guide\n\n[Related](catalog-a-specification.md#choose-the-source) · [Map](../README.md)\n\n`[Example](example.md)`\n"
 		if err := os.WriteFile(filepath.Join(dir, handbookDir, slug+".md"), []byte(body), 0o644); err != nil {
 			t.Fatal(err)
 		}
@@ -88,7 +88,7 @@ func TestGeneratedArtifactsAndReadOnlyDriftCheck(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	for _, expected := range []string{"/guides/list-a-companion#choose-a-role", githubSource + "docs/cli-handbook/README.md", "`[Example](example.md)`"} {
+	for _, expected := range []string{"/guides/catalog-a-specification#choose-the-source", githubSource + "docs/cli-handbook/README.md", "`[Example](example.md)`"} {
 		if !strings.Contains(string(guide), expected) {
 			t.Fatalf("web guide is missing %q", expected)
 		}

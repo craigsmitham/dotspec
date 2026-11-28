@@ -2,10 +2,9 @@
 type: requirement-spec
 id: diagnostic-severity
 quality_attributes: [diagnosability, accessibility]
-companions:
-  - target: ../../../../internal/cli/quality_contracts_test.go#TestDiagnosticSeverityQualityContract
-    role: verifies
-    note: CLI quality-contract test for severity without styling
+verification:
+  - name: CLI quality-contract test for severity without styling
+    source: ../../../../internal/cli/quality_contracts_test.go#TestDiagnosticSeverityQualityContract
 ---
 
 # Diagnostic severity is available without styling

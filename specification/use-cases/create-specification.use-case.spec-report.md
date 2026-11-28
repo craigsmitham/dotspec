@@ -81,12 +81,15 @@ be edited without invoking `new`.
 
 The [`init`](<../../docs/reference/cli.md#dotspec-init>) and [`new`](<../../docs/reference/cli.md#dotspec-new>) commands and the linked requirement define command behavior.
 
-## Companions
+[Use-case template selection, non-overwrite and inspection](<../../internal/integration/testdata/use-cases.txtar>).
 
-**Illustrated by**
+## Specification sources
 
-- [workflow.txtar](<../../internal/integration/testdata/workflow.txtar>) — Create and inspect
-- [use-cases.txtar](<../../internal/integration/testdata/use-cases.txtar>) — Use-case template selection, non-overwrite and inspection
+<a id="specification.create-and-inspect"></a>
+
+### [Create and inspect](<../../internal/integration/testdata/workflow.txtar>)
+
+Defines requirements.
 
 ---
 

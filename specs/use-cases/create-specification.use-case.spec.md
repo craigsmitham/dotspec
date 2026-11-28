@@ -1,13 +1,10 @@
 ---
 type: use-case-spec
 id: create-specification
-companions:
-  - target: ../../internal/integration/testdata/workflow.txtar
-    role: illustrates
-    note: Create and inspect
-  - target: ../../internal/integration/testdata/use-cases.txtar
-    role: illustrates
-    note: Use-case template selection, non-overwrite and inspection
+specifications:
+  - name: Create and inspect
+    defines: requirements
+    source: ../../internal/integration/testdata/workflow.txtar
 ---
 
 # Create a specification draft
@@ -75,3 +72,5 @@ be edited without invoking `new`.
 ## Authority
 
 The [`init`](../../docs/reference/cli.md#dotspec-init) and [`new`](../../docs/reference/cli.md#dotspec-new) commands and the linked requirement define command behavior.
+
+[Use-case template selection, non-overwrite and inspection](../../internal/integration/testdata/use-cases.txtar).

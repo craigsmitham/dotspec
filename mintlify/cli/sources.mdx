@@ -4,21 +4,22 @@ title: "dotspec sources"
 
 {/* Generated from Cobra command tree by mise run generate. */}
 
-List specifications, their companions, reference documents, system context, and referenced files
+List specifications, verification procedures, reference documents, system context, and referenced files
 
 ```sh
 dotspec sources [<path>] [flags]
 ```
 
-List the files check reads: specifications, reference documents, enclosing system context and directly referenced files, each with the references that reach it. A file a specification lists as a companion shows the role that specification states for it. With no `<path>`, sources covers the enclosing project; a directory narrows it to that subtree.
+List the files check reads: specifications, reference documents, enclosing system context and directly referenced files, each with the references that reach it. A named specification source shows what it defines. A verification procedure identifies the specification it assesses. With no `<path>`, sources covers the enclosing project; a directory narrows it to that subtree. A file selects its incoming references from the project inventory.
 
-A listed reference means its target exists and can be addressed, not that the target is authoritative; a companion's role is the author's declaration, not a verified relationship. Exits 1 when error findings are reported.
+A listed reference means its target exists and can be addressed, not that the target is authoritative. Exits 1 when error findings are reported.
 
 Learn more: dotspec docs docs/reference/inspection.md#discover-specification-sources
 
 ```sh
 dotspec sources
 dotspec sources internal --json
+dotspec sources tests/acceptance.py
 ```
 
 | Flag | Default | Description |

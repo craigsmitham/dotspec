@@ -45,6 +45,10 @@ func prepareExample(t *testing.T, command string) {
 		writeFixture(t, "dotspec.yaml", "name: demo\n")
 		return
 	}
+	if command == "dotspec sources" {
+		writeFixture(t, "tests/acceptance.py", "def check():\n    pass\n")
+		writeFixture(t, "specs/requirements/acceptance.requirement.spec.md", "---\ntype: requirement-spec\nverification:\n  - {name: Acceptance check, source: ../../tests/acceptance.py#check}\n---\n# Acceptance\n## Statement\nCheck the recorded outcome.\n")
+	}
 	writeFixture(t, "specs/features/resume-work.feature.spec.md", "---\ntype: feature-spec\n---\n# Resume work\n")
 	writeFixture(t, "specs/capabilities/local-storage.capability.spec.md", "---\ntype: capability-spec\n---\n# Local storage\n")
 	writeFixture(t, "specs/jobs/develop-requirements.job.spec.md", jobFixture)

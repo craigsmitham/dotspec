@@ -125,12 +125,19 @@ The [`new quality-attribute` command](<../../docs/reference/cli.md#dotspec-new-q
 the [adoption reference](<../../docs/reference/inspection.md#adopt-quality-attributes>)
 and the linked requirements define command behavior.
 
-## Companions
+## Specification sources
 
-**Illustrated by**
+<a id="specification.adoption-into-the-nearest-system-refusal-of-a-declared-attribute-and-parent-reuse"></a>
 
-- [quality-convention.txtar](<../../internal/integration/testdata/quality-convention.txtar>) — Adoption into the nearest system, refusal of a declared attribute and parent reuse
-- [quality-models.txtar](<../../internal/integration/testdata/quality-models.txtar>) — Preview, bundled and local models, and a term with two parents
+### [Adoption into the nearest system, refusal of a declared attribute and parent reuse](<../../internal/integration/testdata/quality-convention.txtar>)
+
+Defines requirements.
+
+<a id="specification.preview-bundled-and-local-models-and-a-term-with-two-parents"></a>
+
+### [Preview, bundled and local models, and a term with two parents](<../../internal/integration/testdata/quality-models.txtar>)
+
+Defines requirements.
 
 ---
 

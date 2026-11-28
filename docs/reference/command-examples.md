@@ -406,7 +406,7 @@ dotspec sources --json
       },
       "path": "$PROJECT/dotspec.yaml",
       "referenced_by": [],
-      "companion_of": []
+      "declarations": []
     },
     {
       "project": {
@@ -415,7 +415,7 @@ dotspec sources --json
       },
       "path": "$PROJECT/specs/bookings.system.spec.md",
       "referenced_by": [],
-      "companion_of": []
+      "declarations": []
     },
     {
       "project": {
@@ -424,7 +424,7 @@ dotspec sources --json
       },
       "path": "$PROJECT/specs/concepts/job-map.concept.spec.md",
       "referenced_by": [],
-      "companion_of": []
+      "declarations": []
     },
     {
       "project": {
@@ -433,7 +433,7 @@ dotspec sources --json
       },
       "path": "$PROJECT/specs/jobs/develop-requirements.job.spec.md",
       "referenced_by": [],
-      "companion_of": []
+      "declarations": []
     },
     {
       "project": {
@@ -442,7 +442,7 @@ dotspec sources --json
       },
       "path": "$PROJECT/specs/requirements/diagnostic-severity.requirement.spec.md",
       "referenced_by": [],
-      "companion_of": []
+      "declarations": []
     },
     {
       "project": {
@@ -451,7 +451,7 @@ dotspec sources --json
       },
       "path": "$PROJECT/specs/requirements/reject-existing-target.requirement.spec.md",
       "referenced_by": [],
-      "companion_of": []
+      "declarations": []
     },
     {
       "project": {
@@ -460,7 +460,7 @@ dotspec sources --json
       },
       "path": "$PROJECT/specs/use-cases/check-specifications.use-case.spec.md",
       "referenced_by": [],
-      "companion_of": []
+      "declarations": []
     },
     {
       "project": {
@@ -469,7 +469,7 @@ dotspec sources --json
       },
       "path": "$PROJECT/specs/use-cases/review-change.use-case.spec.md",
       "referenced_by": [],
-      "companion_of": []
+      "declarations": []
     }
   ],
   "diagnostics": [

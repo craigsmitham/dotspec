@@ -21,7 +21,6 @@ type overviewSection struct {
 	diagram           string
 	hasBody           bool
 	omitEmptyPassages bool
-	companions        bool // lists the subject's frontmatter companions
 }
 
 func (h *heading) overviewField() string {
@@ -37,7 +36,6 @@ func (p *planner) planOverview(s *subject) []overviewSection {
 	} else {
 		sections = componentOutline(architecture)
 	}
-	sections = append(sections, overviewSection{title: "Companions", level: 2, companions: true})
 	sections = append(sections, overviewReferences...)
 	omitEmpty := map[string]bool{}
 	for _, section := range sections {
@@ -70,7 +68,7 @@ func (p *planner) planOverview(s *subject) []overviewSection {
 		section := &sections[i]
 		section.directory = s.indexes[section.collection]
 		hasMembers := section.directory != nil && len(section.directory.members) > 0
-		section.hasBody = len(section.passages) > 0 || section.diagram != "" || hasMembers || (section.companions && len(p.companions[id(s.r)]) > 0)
+		section.hasBody = len(section.passages) > 0 || section.diagram != "" || hasMembers
 		if section.level == 2 {
 			parent = section
 		} else if section.level == 3 && section.hasBody {
@@ -191,9 +189,6 @@ func (p *planner) renderOverview(w *writer, s *subject) {
 			continue
 		}
 		w.out.WriteString(section.diagram)
-		if section.companions {
-			w.text(p.companionBody(w.file, s))
-		}
 	}
 }
 

@@ -24,21 +24,26 @@ type Outline struct {
 	AST          ast.Node
 	Sections     []*Section
 	Anchors      map[string]bool
-	// Companions lists the validated frontmatter companions of a typed specification.
-	Companions []Companion
+	// Catalog contains named specifications and verification procedures.
+	Catalog []CatalogEntry
 }
 
 // TypedOutline is the shared Markdown extraction path. The caller supplies a
 // fresh metadata destination defining its accepted fields and interprets the
 // resulting sections and metadata, including any explicit identifiers.
 func (md *Markdown) TypedOutline(kind string, metadata TypedMetadata) (*Outline, error) {
-	companions, err := md.decode(kind, metadata)
+	catalog, err := md.decode(kind, metadata)
 	if err != nil {
 		return nil, err
 	}
 	out, err := md.Outline(kind)
 	if err == nil {
-		out.Companions = companions
+		out.Catalog = catalog
+		for _, entry := range catalog {
+			if entry.Defines != "" {
+				out.Anchors[SpecificationAnchor(entry.Name.Value)] = true
+			}
+		}
 		err = out.checkFields(DocumentRootClass(kind), out.Sections, 2)
 	}
 	return out, err

@@ -148,14 +148,31 @@ describes the report and inspection behavior used in this interaction.
 Its [quality requirements](<../concepts/specification-inspection.concept.spec-report.md#state>)
 cover diagnostic severity, report repeatability, and source preservation.
 
-## Companions
+## Specification sources
 
-**Illustrated by**
+<a id="specification.repository-discovery"></a>
 
-- [discovery.txtar](<../../internal/integration/testdata/discovery.txtar>) — Repository discovery
-- [diagnostics.txtar](<../../internal/integration/testdata/diagnostics.txtar>) — Diagnostics and exit statuses
-- [use-cases.txtar](<../../internal/integration/testdata/use-cases.txtar>) — Focused and project-wide checks of draft and malformed use cases
-- [boundary-advice.txtar](<../../internal/integration/testdata/boundary-advice.txtar>) — Advice on assumptions without Basis or Applicability and interfaces without a contract link
+### [Repository discovery](<../../internal/integration/testdata/discovery.txtar>)
+
+Defines requirements.
+
+<a id="specification.diagnostics-and-exit-statuses"></a>
+
+### [Diagnostics and exit statuses](<../../internal/integration/testdata/diagnostics.txtar>)
+
+Defines requirements.
+
+<a id="specification.focused-and-project-wide-checks-of-draft-and-malformed-use-cases"></a>
+
+### [Focused and project-wide checks of draft and malformed use cases](<../../internal/integration/testdata/use-cases.txtar>)
+
+Defines requirements.
+
+<a id="specification.advice-on-assumptions-without-basis-or-applicability-and-interfaces-without-a-contract-link"></a>
+
+### [Advice on assumptions without Basis or Applicability and interfaces without a contract link](<../../internal/integration/testdata/boundary-advice.txtar>)
+
+Defines requirements.
 
 ---
 

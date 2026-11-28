@@ -36,7 +36,6 @@ Capability	Related specifications
 Capability	Relies on
 Capability	Specification system
 Capability	Supports
-Companion	Open questions
 Component	Adopts
 Component	Architecture
 Component	Authority
@@ -186,6 +185,7 @@ Specification	Open questions
 Specification	Related specifications
 Specification	Relies on
 Specification	Supports
+SpecificationReference	Open questions
 Synchronization	Derived from
 Synchronization	Open questions
 Synchronization	Relies on
@@ -270,3 +270,4 @@ UseCase	Trigger
 UseCaseExtension	Condition
 UseCaseExtension	Handling
 UseCaseExtension	Open questions
+VerificationProcedure	Open questions

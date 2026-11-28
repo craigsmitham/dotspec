@@ -33,9 +33,10 @@ type VerificationResult struct {
 }
 
 type ProcedureAssessment struct {
-	Subject      string               `json:"subject"`
-	Procedures   []string             `json:"procedures"`
-	Observations []VerificationResult `json:"observations,omitempty"`
+	UsedAsProcedure bool                 `json:"used_as_procedure,omitempty"`
+	Subject         string               `json:"subject"`
+	Procedures      []string             `json:"procedures"`
+	Observations    []VerificationResult `json:"observations,omitempty"`
 }
 
 const VerificationFile = "verification-results.json"
@@ -90,11 +91,25 @@ func ParseVerificationEvidence(input []byte) (VerificationEvidence, error) {
 	return evidence, nil
 }
 
-// Assessments indexes the original observations by their stated subject: a
-// requirement's project-relative URI. Its procedures are the companions it
-// lists with role verifies; a procedure's portable identity is its URI
-// resolved relative to the project.
-func (s *Snapshot) Assessments(root string, evidence VerificationEvidence) (map[string][]*ProcedureAssessment, error) {
+// Project-relative identities keep observations portable across checkouts.
+func procedureURI(document, raw string) (string, error) {
+	u, err := url.Parse(raw)
+	if err != nil {
+		return "", err
+	}
+	if !u.IsAbs() && u.Host == "" && !strings.HasPrefix(u.Path, "/") {
+		if u.Path == "" {
+			u.Path = document
+		} else {
+			u.Path = path.Join(path.Dir(document), u.Path)
+		}
+		u.RawPath = ""
+	}
+	return u.String(), nil
+}
+
+// Assessments joins observations to Markdown subjects and named native declarations.
+func (s *Snapshot) Assessments(root string, evidence VerificationEvidence) (map[string]*ProcedureAssessment, error) {
 	index := map[string]Record{}
 	for _, collection := range [][]Record{s.Sources, s.References, s.Elements} {
 		for _, r := range collection {
@@ -102,37 +117,44 @@ func (s *Snapshot) Assessments(root string, evidence VerificationEvidence) (map[
 		}
 	}
 	bySubject := map[string]*ProcedureAssessment{}
-	byRequirement := map[string][]*ProcedureAssessment{}
+	byRecord := map[string]*ProcedureAssessment{}
+	selfProcedures := map[string]string{}
 	for _, r := range s.Elements {
 		source := index[String(r, "source_document")]
-		if r["kind"] != "Requirement" || source["selected"] != true {
+		native := r["kind"] == "SpecificationReference"
+		if source["selected"] != true || (!native && r["kind"] != "Requirement" && r["verification"] == nil) {
 			continue
 		}
 		rel, err := filepath.Rel(root, filepath.FromSlash(String(source, "locator")))
 		if err != nil {
 			return nil, err
 		}
-		subject := (&url.URL{Path: filepath.ToSlash(rel)}).String()
+		document := filepath.ToSlash(rel)
+		locator := url.URL{Path: document}
+		if native {
+			locator.Fragment = String(r, "anchor")
+		}
+		subject := locator.String()
 		assessment := &ProcedureAssessment{Subject: subject}
-		for _, id := range Strings(r["companions"]) {
-			companion := index[id]
-			if String(companion, "role") != "verifies" {
-				continue
-			}
-			raw := String(index[String(companion, "target")], "authored_target")
-			u, err := url.Parse(raw)
+		target := func(record Record) (string, error) {
+			return procedureURI(document, String(index[String(record, "source")], "authored_target"))
+		}
+		if native {
+			self, err := target(r)
 			if err != nil {
 				return nil, err
 			}
-			if !u.IsAbs() && u.Host == "" && !strings.HasPrefix(u.Path, "/") {
-				u.Path = path.Join(path.Dir(filepath.ToSlash(rel)), u.Path)
-				u.RawPath = ""
+			selfProcedures[subject] = self
+		}
+		for _, key := range Strings(r["verification"]) {
+			proc, err := target(index[key])
+			if err != nil {
+				return nil, err
 			}
-			assessment.Procedures = appendUnique(assessment.Procedures, u.String())
+			assessment.Procedures = appendUnique(assessment.Procedures, proc)
 		}
 		bySubject[subject] = assessment
-		id := String(r, "id")
-		byRequirement[id] = append(byRequirement[id], assessment)
+		byRecord[String(r, "id")] = assessment
 	}
 	roots := Strings(s.Scope["roots"])
 	wholeProject := len(roots) == 1 && roots[0] == filepath.ToSlash(root) && s.Scope["inspection_complete"] == true
@@ -142,9 +164,13 @@ func (s *Snapshot) Assessments(root string, evidence VerificationEvidence) (map[
 			if !wholeProject {
 				continue
 			}
-			return nil, fmt.Errorf("%s: results[%d]: unknown requirement %q", VerificationFile, i, result.Subject)
+			return nil, fmt.Errorf("%s: results[%d]: unknown verification subject %q", VerificationFile, i, result.Subject)
+		}
+		if result.Procedure == selfProcedures[result.Subject] {
+			target.UsedAsProcedure = true
+			target.Procedures = appendUnique(target.Procedures, result.Procedure)
 		}
 		target.Observations = append(target.Observations, result)
 	}
-	return byRequirement, nil
+	return byRecord, nil
 }

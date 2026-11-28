@@ -41,10 +41,10 @@ from findings or an operational failure. A program can make its next decision fr
 that result without scraping presentation prose for an implied success claim.
 
 The workflow of creating, editing and inspecting specifications spans several
-concepts. Its executable cases are companions of the
+concepts. Its executable cases are named sources on the
 [create a specification draft](../../../../specs/use-cases/create-specification.use-case.spec.md)
 and [check specifications before committing](../../../../specs/use-cases/check-specifications.use-case.spec.md)
-use cases. Scripts that no specification lists as a companion yet are linked below
+use cases. Scripts that no specification names yet are linked below
 beside the sources they exercise; they do not make every command a separate action
 of this concept.
 

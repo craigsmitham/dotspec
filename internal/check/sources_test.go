@@ -34,12 +34,12 @@ func TestSourcesCollectLinksFromEveryTypeWithoutInterpretingNativeFiles(t *testi
 		t.Fatal(err)
 	}
 	git(t, dir, "init", "-q")
-	native := filepath.Join(dir, "contract.tla")
+	native := filepath.Join(dir, "contract.bin")
 	guide := filepath.Join(dir, "Guide to tests.md")
 	write(t, native, "native\x00content\n[Not Markdown](missing.md)\n")
 	write(t, guide, "# Guide\n[No recursive discovery](unlisted.txt)\n")
 	write(t, filepath.Join(dir, "unlisted.txt"), "Must stay outside the inventory.\n")
-	write(t, filepath.Join(dir, ".gitignore"), "contract.tla\nGuide to tests.md\n")
+	write(t, filepath.Join(dir, ".gitignore"), "contract.bin\nGuide to tests.md\n")
 	specs := map[string]string{
 		system.Layout.Path(dir, "new-system"): system.Template,
 		job.Layout.Path(dir, "work"):          job.Template,
@@ -57,7 +57,7 @@ func TestSourcesCollectLinksFromEveryTypeWithoutInterpretingNativeFiles(t *testi
 		specs[path] = content
 	}
 	path := concept.Layout.Path(dir, "work")
-	specs[path] += "[Another reference](../../contract.tla)\n[Guide](../../Guide%20to%20tests.md#guide)\n[Directory](../../)\n[Remote](https://example.invalid/file)\n`[Code](absent.txt)`\n![Image](absent.png)\n"
+	specs[path] += "[Another reference](../../contract.bin)\n[Guide](../../Guide%20to%20tests.md#guide)\n[Directory](../../)\n[Remote](https://example.invalid/file)\n`[Code](absent.txt)`\n![Image](absent.png)\n"
 	write(t, path, specs[path])
 	r := sourceReport(dir)
 	if r.ExitCode() != 0 || len(r.Files) != 7 || !r.Complete {
@@ -93,7 +93,7 @@ func TestSourcesCollectLinksFromEveryTypeWithoutInterpretingNativeFiles(t *testi
 	}
 }
 
-func TestSourcesReportEachCompanionEntryWithItsStatedRole(t *testing.T) {
+func TestSourcesReportSpecificationsAndProcedures(t *testing.T) {
 	dir, err := filepath.EvalSymlinks(t.TempDir())
 	if err != nil {
 		t.Fatal(err)
@@ -103,23 +103,23 @@ func TestSourcesReportEachCompanionEntryWithItsStatedRole(t *testing.T) {
 	test := filepath.Join(dir, "tests", "views.py")
 	write(t, test, "def check():\n    pass\n")
 	path := requirement.Layout.Path(dir, "views")
-	frontmatter := "---\ntype: requirement-spec\ncompanions:\n  - target: ../../tests/views.py#check\n    role: verifies\n  - target: ../../tests/views.py\n    role: illustrates\n  - target: https://example.invalid/background\n    role: explains\n---\n"
+	frontmatter := "---\ntype: requirement-spec\nverification:\n  - source: ../../tests/views.py#check\n    name: Exercise views\nspecifications:\n  - source: ../../tests/views.py\n    name: View examples\n    defines: requirements\n---\n"
 	write(t, path, frontmatter+strings.TrimPrefix(requirement.Template, "---\ntype: requirement-spec\n---\n")+"\n[Body link](../../tests/views.py)\n")
 	r := sourceReport(dir)
 	if r.ExitCode() != 0 || !r.Complete {
 		t.Fatalf("sources: %+v", r)
 	}
 	file := sourceMap(r)[test]
-	want := []check.SourceCompanion{
-		{Role: "verifies", Target: "../../tests/views.py#check", Location: diagnostic.Location{Path: path, Line: 4, Column: 13, Element: "companions"}},
-		{Role: "illustrates", Target: "../../tests/views.py", Location: diagnostic.Location{Path: path, Line: 6, Column: 13, Element: "companions"}},
+	want := []check.SourceDeclaration{
+		{Name: "Exercise views", Source: "../../tests/views.py#check", Location: diagnostic.Location{Path: path, Line: 4, Column: 13, Element: "verification"}},
+		{Name: "View examples", Defines: "requirements", Source: "../../tests/views.py", Location: diagnostic.Location{Path: path, Line: 7, Column: 13, Element: "specifications"}},
 	}
-	if !reflect.DeepEqual(file.CompanionOf, want) || len(file.ReferencedBy) != 3 {
-		t.Fatalf("companions: %+v", file)
+	if !reflect.DeepEqual(file.Declarations, want) || len(file.ReferencedBy) != 3 {
+		t.Fatalf("declarations: %+v", file)
 	}
 	for _, other := range r.Files {
-		if other.CompanionOf == nil || other.Path != test && len(other.CompanionOf) != 0 {
-			t.Fatalf("companion entries on %s: %+v", other.Path, other.CompanionOf)
+		if other.Declarations == nil || other.Path != test && len(other.Declarations) != 0 {
+			t.Fatalf("catalog entries on %s: %+v", other.Path, other.Declarations)
 		}
 	}
 }

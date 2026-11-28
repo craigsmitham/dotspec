@@ -7,6 +7,7 @@ import (
 	"io"
 	"io/fs"
 	"os"
+	pathpkg "path"
 	"path/filepath"
 	"regexp"
 	"sort"
@@ -25,9 +26,10 @@ type Workspace struct {
 }
 
 type Project struct {
-	Name  string      `json:"name" yaml:"name"`
-	Build BuildConfig `json:"-" yaml:"build"`
-	Root  string      `json:"root" yaml:"-"`
+	Name                  string      `json:"name" yaml:"name"`
+	SpecificationPatterns []string    `json:"-" yaml:"specification_patterns"`
+	Build                 BuildConfig `json:"-" yaml:"build"`
+	Root                  string      `json:"root" yaml:"-"`
 }
 
 // BuildConfig controls whether the project has a generated specification.
@@ -69,6 +71,11 @@ func readProject(root string) (*Project, error) {
 	}
 	if !projectName.MatchString(p.Name) {
 		return nil, fmt.Errorf("%s: invalid project name %q", path, p.Name)
+	}
+	for _, pattern := range p.SpecificationPatterns {
+		if _, err := pathpkg.Match(pattern, ""); err != nil || pattern == "" || strings.HasPrefix(pattern, "/") {
+			return nil, fmt.Errorf("%s: invalid specification pattern %q", path, pattern)
+		}
 	}
 	return p, nil
 }

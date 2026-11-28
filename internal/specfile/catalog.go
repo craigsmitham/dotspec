@@ -2,7 +2,7 @@ package specfile
 
 import (
 	"bytes"
-	"fmt"
+	"net/url"
 	"os"
 	"path"
 	"path/filepath"
@@ -14,111 +14,118 @@ import (
 	"go.yaml.in/yaml/v3"
 )
 
-// CompanionsField is the frontmatter key that lists a specification's companions.
-const CompanionsField = "companions"
+const SpecificationsField = "specifications"
+const VerificationField = "verification"
 
-// A companion carries part of a specification's intent in another form, such
-// as a formal model, an executable example, a test or an explanatory document.
-// The role states how it relates to the specification; a link alone confers no
-// authority.
-type Companion struct {
-	Target   string
-	Role     string
-	Location diagnostic.Location
+// CatalogEntry identifies a named source and the exact authored scalars for export.
+// Defines is empty for a verification procedure.
+type CatalogEntry struct {
+	Name, Source *yaml.Node
+	Defines      string
+	Verification []CatalogEntry
+	Flow         bool
+	Location     diagnostic.Location
 }
 
-// CompanionRoles lists the closed role vocabulary in presentation order.
-var CompanionRoles = []string{"formalizes", "illustrates", "verifies", "explains"}
-
-// CompanionRoleLabel is the reader-facing phrase for a role, read from the
-// specification toward its companion.
-func CompanionRoleLabel(role string) string {
-	switch role {
-	case "formalizes":
-		return "Formalized by"
-	case "illustrates":
-		return "Illustrated by"
-	case "verifies":
-		return "Verified by"
-	case "explains":
-		return "Explained by"
-	}
-	return role
+func SpecificationAnchor(name string) string {
+	return "specification." + RenderedHeadingIDs{}.Next(name)
 }
 
-var companionKeys = []string{"target", "role", "note"}
-
-// Companions validates the frontmatter list of a specification of this kind
-// and returns its entries with the location of each target. A missing key
-// yields no entries.
-func (md *Markdown) Companions(kind string) ([]Companion, error) {
-	list := md.Value(CompanionsField)
-	if list == nil {
-		return nil, nil
-	}
-	at := func(n *yaml.Node) diagnostic.Location {
-		return diagnostic.Location{Line: n.Line + 1, Column: n.Column, Element: CompanionsField}
-	}
-	if kind == "quality-model" {
-		return nil, diagnostic.Error("companion.invalid", "A quality model is reference material. Declare companions on the specifications that use it.", at(list))
-	}
-	if list.Kind != yaml.SequenceNode {
-		return nil, diagnostic.Error("companion.invalid", "List companions as a YAML sequence of entries with target and role.", at(list))
-	}
-	var result []Companion
-	seen := map[[2]string]diagnostic.Location{}
-	for _, item := range list.Content {
-		if item.Kind != yaml.MappingNode {
-			return nil, diagnostic.Error("companion.invalid", "Give each companion a mapping with target and role.", at(item))
+func (md *Markdown) Catalog(kind string) ([]CatalogEntry, error) {
+	var result []CatalogEntry
+	for _, field := range []string{SpecificationsField, VerificationField} {
+		list := md.Value(field)
+		if list == nil {
+			continue
 		}
-		entry := Companion{Location: at(item)}
-		values := map[string]*yaml.Node{}
-		for i := 0; i+1 < len(item.Content); i += 2 {
-			key, value := item.Content[i], item.Content[i+1]
-			if !slices.Contains(companionKeys, key.Value) {
-				return nil, diagnostic.Error("companion.invalid", fmt.Sprintf("Unknown companion key %q. Use target, role and optionally note.", key.Value), at(key))
-			}
-			if values[key.Value] != nil {
-				return nil, diagnostic.Error("companion.invalid", fmt.Sprintf("Duplicate companion key %q.", key.Value), at(key))
-			}
-			if value.Kind != yaml.ScalarNode || value.ShortTag() != "!!str" {
-				return nil, diagnostic.Error("companion.invalid", fmt.Sprintf("Give companion %s a single-line text value.", key.Value), at(value))
-			}
-			if strings.ContainsAny(value.Value, "\r\n") || strings.TrimSpace(value.Value) != value.Value {
-				return nil, diagnostic.Error("companion.invalid", fmt.Sprintf("Give companion %s a single-line value without surrounding spaces.", key.Value), at(value))
-			}
-			values[key.Value] = value
+		if kind == "quality-model" {
+			return nil, diagnostic.Error("catalog.invalid", "A quality model is reference material. Declare specification sources and verification on a specification.", md.MetadataLocation(field))
 		}
-		target, role := values["target"], values["role"]
-		if target == nil || target.Value == "" {
-			return nil, diagnostic.Error("companion.invalid", "Give each companion a target: a relative path or URL, optionally with a #definition fragment.", at(item))
+		entries, err := catalogList(list, field)
+		if err != nil {
+			return nil, err
 		}
-		if role == nil || role.Value == "" {
-			return nil, diagnostic.Error("companion.role", "Give each companion a role: "+strings.Join(CompanionRoles, ", ")+".", at(item))
-		}
-		if !slices.Contains(CompanionRoles, role.Value) {
-			return nil, diagnostic.Error("companion.role", fmt.Sprintf("Unknown companion role %q. Use one of %s.", role.Value, strings.Join(CompanionRoles, ", ")), at(role))
-		}
-		if strings.HasPrefix(target.Value, "#") {
-			return nil, diagnostic.Error("companion.invalid", "A companion is another file or resource. Link to this specification's own passages from its body.", at(target))
-		}
-		entry.Target, entry.Role, entry.Location = target.Value, role.Value, at(target)
-		if note := values["note"]; note != nil {
-			if note.Value == "" {
-				return nil, diagnostic.Error("companion.invalid", "Omit an empty note.", at(note))
-			}
-		}
-		key := [2]string{entry.Target, entry.Role}
-		if previous, ok := seen[key]; ok {
-			return nil, diagnostic.Error("companion.duplicate", fmt.Sprintf("%s already lists %q with role %s.", CompanionsField, entry.Target, entry.Role), entry.Location, previous)
-		}
-		seen[key] = entry.Location
-		result = append(result, entry)
+		result = append(result, entries...)
 	}
 	return result, nil
 }
 
-// NativeDefinition is a named declaration in a non-Markdown companion.
+func catalogList(list *yaml.Node, field string) ([]CatalogEntry, error) {
+	at := func(n *yaml.Node) diagnostic.Location {
+		return diagnostic.Location{Line: n.Line + 1, Column: n.Column, Element: field}
+	}
+	invalid := func(n *yaml.Node, message string) error { return diagnostic.Error("catalog.invalid", message, at(n)) }
+	if list.Kind != yaml.SequenceNode {
+		return nil, invalid(list, "Write "+field+" as a YAML sequence of named sources.")
+	}
+	var entries []CatalogEntry
+	names := map[string]diagnostic.Location{}
+	for _, item := range list.Content {
+		if item.Kind != yaml.MappingNode {
+			return nil, invalid(item, "Write each entry as a mapping with a name and source.")
+		}
+		values := map[string]*yaml.Node{}
+		for i := 0; i < len(item.Content); i += 2 {
+			k, v := item.Content[i], item.Content[i+1]
+			if values[k.Value] != nil {
+				return nil, invalid(k, "Repeated key "+k.Value+".")
+			}
+			switch k.Value {
+			case "name", "source":
+			case "defines", VerificationField:
+				if field != SpecificationsField {
+					return nil, invalid(k, "Unexpected verification key "+k.Value+".")
+				}
+			default:
+				return nil, invalid(k, "Unknown "+field+" key "+k.Value+".")
+			}
+			if k.Value != VerificationField && (v.Kind != yaml.ScalarNode || v.ShortTag() != "!!str" || v.Value == "" || strings.TrimSpace(v.Value) != v.Value || strings.ContainsAny(v.Value, "\r\n")) {
+				return nil, invalid(v, "Give "+k.Value+" a nonempty single-line text value without surrounding spaces.")
+			}
+			values[k.Value] = v
+		}
+		for _, key := range []string{"name", "source"} {
+			if values[key] == nil {
+				return nil, invalid(item, "Give each entry a "+key+".")
+			}
+		}
+		entry := CatalogEntry{Name: values["name"], Source: values["source"], Flow: item.Style&yaml.FlowStyle != 0 || list.Style&yaml.FlowStyle != 0, Location: at(values["source"])}
+		locator, err := url.Parse(entry.Source.Value)
+		if err != nil || (!locator.IsAbs() && (locator.Path == "" || locator.Host != "" || strings.HasPrefix(locator.Path, "/") || strings.Contains(locator.Path, "\\"))) {
+			return nil, invalid(entry.Source, "Give the source a path or URL, optionally with a fragment.")
+		}
+		anchor := SpecificationAnchor(entry.Name.Value)
+		if anchor == "specification." {
+			return nil, invalid(entry.Name, "Give the name at least one addressable character.")
+		}
+		if prior, ok := names[anchor]; ok {
+			return nil, diagnostic.Error("catalog.duplicate", "Choose distinct names in this collection.", at(entry.Name), prior)
+		}
+		names[anchor] = at(entry.Name)
+		if field == SpecificationsField {
+			defines := values["defines"]
+			if defines == nil {
+				return nil, invalid(item, "Give each specification a defines category.")
+			}
+			categories := schemaCatalog().Enums["SpecificationCategory"]
+			if !slices.Contains(categories, defines.Value) {
+				return nil, invalid(defines, "Choose defines from "+strings.Join(categories, ", ")+".")
+			}
+			entry.Defines = defines.Value
+			if nested := values[VerificationField]; nested != nil {
+				procedures, err := catalogList(nested, VerificationField)
+				if err != nil {
+					return nil, err
+				}
+				entry.Verification = procedures
+			}
+		}
+		entries = append(entries, entry)
+	}
+	return entries, nil
+}
+
+// NativeDefinition is a named declaration in a native source.
 type NativeDefinition struct {
 	Name string
 	Line int

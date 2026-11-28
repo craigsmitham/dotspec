@@ -1,10 +1,9 @@
 ---
 type: requirement-spec
 id: keep-recorded-work-available
-companions:
-  - target: ../../README.md#run-the-app
-    role: verifies
-    note: Exercise the forms across list views
+verification:
+  - name: Exercise the forms across list views
+    source: ../../README.md#run-the-app
 ---
 # Keep recorded work available
 

@@ -130,12 +130,13 @@ Representative. Building and checking can repeat in any useful order.
 The [build command](<../../docs/reference/cli.md#dotspec-build>) and the linked
 generated specification requirement define command behavior.
 
-## Companions
+[A build without a project, a first build and the check that confirms it](<../../internal/integration/testdata/init.txtar>).
 
-**Illustrated by**
+## Verification
 
-- [init.txtar](<../../internal/integration/testdata/init.txtar>) — A build without a project, a first build and the check that confirms it
-- [check.py](<../../scripts/check-example/check.py>) — Rebuilding the To-do generated specification and following its links
+- [Rebuilding the To-do generated specification and following its links](<../../scripts/check-example/check.py>)
+
+No matching result recorded.
 
 ---
 

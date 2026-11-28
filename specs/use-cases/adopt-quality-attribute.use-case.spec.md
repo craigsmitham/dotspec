@@ -1,13 +1,13 @@
 ---
 type: use-case-spec
 id: adopt-quality-attribute
-companions:
-  - target: ../../internal/integration/testdata/quality-convention.txtar
-    role: illustrates
-    note: Adoption into the nearest system, refusal of a declared attribute and parent reuse
-  - target: ../../internal/integration/testdata/quality-models.txtar
-    role: illustrates
-    note: Preview, bundled and local models, and a term with two parents
+specifications:
+  - name: Adoption into the nearest system, refusal of a declared attribute and parent reuse
+    defines: requirements
+    source: ../../internal/integration/testdata/quality-convention.txtar
+  - name: Preview, bundled and local models, and a term with two parents
+    defines: requirements
+    source: ../../internal/integration/testdata/quality-models.txtar
 ---
 
 # Adopt a quality attribute for a system

@@ -5,6 +5,7 @@ import (
 	"errors"
 	"net/url"
 	"os"
+	"path"
 	"path/filepath"
 	"slices"
 	"sort"
@@ -131,21 +132,18 @@ func project(path string, inventory *Inventory, types ...Type) Report {
 	}
 	r.inspectContexts(contexts, discovered)
 	r.inspectReferences(referenceSources, discovered, types)
-	r.inspectUnlistedCompanions(dir, paths, types)
+	r.inspectUnlistedSources(dir, paths, types)
 	return r.finish()
 }
 
-// Formal models and Gherkin features nearly always carry intent. Each one in
-// a whole-project scan should be some specification's companion. Listings come
-// from every discovered specification's frontmatter, including a source with
-// unrelated findings, and a listed directory covers the files beneath it.
-var companionFormats = []string{".qnt", ".als", ".tla", ".feature"}
+// Well-known specification formats and project-selected paths are candidates for review.
+var specificationFormats = []string{".qnt", ".als", ".tla", ".feature"}
 
-func (r *Report) inspectUnlistedCompanions(dir string, sources []string, types []Type) {
+func (r *Report) inspectUnlistedSources(dir string, sources []string, types []Type) {
 	if r.Scope.Project == nil || filepath.Clean(dir) != filepath.Clean(r.Scope.Project.Root) {
 		return
 	}
-	var listed []string
+	listed := map[string]bool{}
 	for _, source := range sources {
 		kind := MatchType(source, types) // Discovery returned only matching paths.
 		md, err := r.sources.Markdown(source)
@@ -153,30 +151,44 @@ func (r *Report) inspectUnlistedCompanions(dir string, sources []string, types [
 			continue
 		}
 		// An invalid list is reported by the source's own inspection.
-		companions, err := md.Companions(kind.Layout.Kind)
+		entries, err := md.Catalog(kind.Layout.Kind)
 		if err != nil {
 			continue
 		}
-		for _, c := range companions {
-			u, err := url.Parse(c.Target)
+		for _, c := range entries {
+			if c.Defines == "" {
+				continue
+			}
+			u, err := url.Parse(c.Source.Value)
 			if err != nil || u.IsAbs() || u.Host != "" || u.Path == "" || strings.HasPrefix(u.Path, "/") {
 				continue
 			}
-			listed = append(listed, filepath.Clean(filepath.Join(filepath.Dir(source), filepath.FromSlash(u.Path))))
+			listed[filepath.Join(filepath.Dir(source), filepath.FromSlash(u.Path))] = true
 		}
 	}
 	files, err := specfile.Discover(dir, func(name string) bool {
-		return slices.Contains(companionFormats, strings.ToLower(filepath.Ext(name)))
+		return len(r.Scope.Project.SpecificationPatterns) > 0 || slices.Contains(specificationFormats, strings.ToLower(filepath.Ext(name)))
 	})
 	if err != nil {
 		r.record(err, "scan.discovery", dir)
 		return
 	}
 	for _, file := range files {
-		if !slices.ContainsFunc(listed, func(target string) bool {
-			return file == target || strings.HasPrefix(file, target+string(filepath.Separator))
-		}) {
-			r.Diagnostics = append(r.Diagnostics, diagnostic.Advice("companion.unlisted", "No specification lists this file as a companion. Add it to the frontmatter companions of the specification whose intent it carries.", diagnostic.Location{Path: file}))
+		rel, err := filepath.Rel(dir, file)
+		if err != nil {
+			r.record(err, "scan.discovery", file)
+			continue
+		}
+		candidate := slices.Contains(specificationFormats, strings.ToLower(filepath.Ext(file)))
+		for _, pattern := range r.Scope.Project.SpecificationPatterns {
+			matched, _ := path.Match(pattern, filepath.ToSlash(rel))
+			if matched {
+				candidate = true
+				break
+			}
+		}
+		if candidate && MatchType(file, types) == nil && !listed[file] {
+			r.Diagnostics = append(r.Diagnostics, diagnostic.Advice("catalog.unlisted", "Review this candidate specification source. Declare it where it governs product behavior.", diagnostic.Location{Path: file}))
 		}
 	}
 }

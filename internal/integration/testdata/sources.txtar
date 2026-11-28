@@ -19,12 +19,12 @@ status 0 dotspec sources . --json
 stdout 'native.tla'
 stdout '"referenced_by": \['
 stdout '"line":'
-stdout '"companion_of": \['
-stdout '"role": "formalizes"'
-stdout '"target": "../../native.tla#Example"'
+stdout '"declarations": \['
+stdout '"defines": "concepts"'
+stdout '"source": "../../native.tla#Example"'
 stdout '"complete": true'
 ! stdout 'not-included'
-! stdout 'companion.unlisted'
+! stdout 'catalog.unlisted'
 ! stderr .
 cp stdout report.json
 status 0 dotspec sources --json
@@ -34,7 +34,7 @@ cmp specs/requirements/preservation.requirement.spec.md ../quality.md
 cmp native.tla ../native.tla
 status 0 dotspec sources
 stdout 'Referenced by specs/concepts/cli.concept.spec.md'
-stdout '^  Companion that formalizes specs/concepts/cli.concept.spec.md:4:13 \(../../native.tla#Example\)$'
+stdout '^  Defines concepts: Native example · specs/concepts/cli.concept.spec.md:4:13 \(../../native.tla#Example\)$'
 ! stdout 'Referenced by specs/concepts/cli.concept.spec.md:4:13'
 stdout 'Referenced by specs/requirements/preservation.requirement.spec.md'
 ! stdout 'Project|Outside any project'
@@ -62,9 +62,10 @@ status 2 dotspec sources one two
 -- concept.md --
 ---
 type: concept-spec
-companions:
-  - target: ../../native.tla#Example
-    role: formalizes
+specifications:
+  - source: ../../native.tla#Example
+    defines: concepts
+    name: Native example
 ---
 # Native example
 ## Purpose

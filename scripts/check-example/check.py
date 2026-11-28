@@ -109,8 +109,8 @@ def check_project(cli, project, tmp):
     adoption, = [e for e in elements if e["kind"] == "AdoptedProvision"]
     provision, = [r for r in model["references"] if r["id"] == adoption["provision"]]
     assert "rfc9110" in provision["authored_target"]
-    procedures = {e["target"] for e in elements if e["kind"] == "Companion"
-                  and e["owner"] == requirement["id"] and e["role"] == "verifies"}
+    procedures = {e["source"] for e in elements if e["kind"] == "VerificationProcedure"
+                  and e["owner"] == requirement["id"]}
     assert any(ref["id"] in procedures and ref["authored_target"] == "../../tests/acceptance.py#verify"
                and ref["resolution"]["status"] == "resolved"
                for ref in model["references"]), "restart requirement must list the acceptance procedure"
@@ -211,10 +211,10 @@ def spec_journey(cli, tmp):
     panels = re.findall(r"<details>\n<summary>([^<]+)</summary>\n\n(.+?)\n\n</details>", navigation, re.S)
     assert [label for label, _ in panels] == ["On this page", "Browse specifications"]
     local = panels[0][1]
-    # Companions have no section on the system report; their index is a browse destination.
-    assert panels[1][1] == "- [Companions](<companions.md>)"
-    companions = (root.parent / "companions.md").read_text(encoding="utf-8")
-    assert "## Verified by" in companions and "acceptance.py › verify](<../tests/acceptance.py#L" in companions
+    assert panels[1][1] == "- [Specifications](<specifications.md>)"
+    catalog = (root.parent / "specifications.md").read_text(encoding="utf-8")
+    assert "Preserve tasks across restart" in catalog
+
     blocks = []
     for group, titles in navigation_groups:
         links = " · ".join(f"[{title}](<#{title.lower().replace(' ', '-')}>)" for title in titles)
@@ -382,7 +382,10 @@ def spec_journey(cli, tmp):
     assert follow(cue, "When a reply needs chasing") == follow(root, "When a reply needs chasing")
     assert follow(cue, "form acceptance test") == project / ACCEPTANCE
     requirements = overview.split("\n## Requirements\n", 1)[1].split("\n## ", 1)[0].strip().splitlines()
-    assert [re.fullmatch(r"- \[([^]]+)\]\(<[^>]+>\) — .+", row)[1] for row in requirements] == [
+    native, = (row for row in requirements if "#specification.saved-follow-up-dates-across-time-zones" in row)
+    assert follow(root, "Saved follow-up dates across time zones") == qualities
+    assert follow(qualities, "Saved follow-up dates across time zones") == project / ACCEPTANCE
+    assert [re.fullmatch(r"- \[([^]]+)\]\(<[^>]+>\) — .+", row)[1] for row in requirements if row != native] == [
         "Acknowledge after commit", "Keep recorded work available", "Preserve tasks across restart",
         "Show which replies need follow-up"]
     assert follow(root, "Acknowledge after commit") == acknowledgement
@@ -584,8 +587,8 @@ def acceptance(project):
 def regressions(cli, tmp):
     for name, path, old, new, reason in [
         ("relationship", REQUIREMENT, "## Refines", "## Related specifications", "missing restart refinement"),
-        ("test-link", REQUIREMENT, "    role: verifies",
-         "    role: explains", "restart requirement must list the acceptance procedure"),
+        ("test-link", REQUIREMENT, "source: ../../tests/acceptance.py#verify",
+         "source: ../../tests/acceptance.py#verify_follow_up_calendar", "restart requirement must list the acceptance procedure"),
         ("persistence", Path("app/main.go"), 'sql.Open("sqlite3", file)',
          'sql.Open("sqlite3", ":memory:")', "restart lost or changed open tasks"),
     ]:

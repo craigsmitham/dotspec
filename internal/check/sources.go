@@ -10,27 +10,27 @@ import (
 	"github.com/dotspec-md/dotspec/internal/specfile"
 )
 
-// SourceFile records a file and its authored incoming links, without assigning
-// authority or interpreting the meaning of its contents. CompanionOf repeats
-// each frontmatter companion entry that targets the file with the role its
-// author stated; the role is reported, not inferred or verified.
+// SourceFile records incoming occurrences, including explicit catalog declarations.
 type SourceFile struct {
 	Project      *specfile.Project     `json:"project,omitempty"`
 	Path         string                `json:"path"`
 	ReferencedBy []diagnostic.Location `json:"referenced_by"`
-	CompanionOf  []SourceCompanion     `json:"companion_of"`
+	Declarations []SourceDeclaration   `json:"declarations"`
 }
 
-// SourceCompanion is one specification's frontmatter entry listing a file as
-// its companion. The location's path is the declaring specification.
-type SourceCompanion struct {
-	Role     string              `json:"role"`
-	Target   string              `json:"target"`
-	Location diagnostic.Location `json:"location"`
+// SourceDeclaration identifies the named source and enclosing specification.
+// A verification procedure may assess a named specification within that document.
+type SourceDeclaration struct {
+	Name                  string              `json:"name"`
+	Defines               string              `json:"defines,omitempty"`
+	VerifiedSpecification string              `json:"verified_specification,omitempty"`
+	Source                string              `json:"source"`
+	Location              diagnostic.Location `json:"location"`
 }
 
 type SourceReport struct {
 	SchemaVersion int                     `json:"schema_version"`
+	SelectedFile  string                  `json:"selected_file,omitempty"`
 	Scope         Scope                   `json:"scope"`
 	Complete      bool                    `json:"complete"`
 	Files         []SourceFile            `json:"files"`
@@ -84,14 +84,14 @@ func InspectSources(path string, types ...Type) Inventory {
 	for _, file := range result.Report.files {
 		sort.Slice(file.ReferencedBy, func(i, j int) bool { return locationLess(file.ReferencedBy[i], file.ReferencedBy[j]) })
 		file.ReferencedBy = slices.Compact(file.ReferencedBy)
-		sort.Slice(file.CompanionOf, func(i, j int) bool {
-			a, b := file.CompanionOf[i], file.CompanionOf[j]
+		sort.Slice(file.Declarations, func(i, j int) bool {
+			a, b := file.Declarations[i], file.Declarations[j]
 			if a.Location != b.Location {
 				return locationLess(a.Location, b.Location)
 			}
-			return a.Role < b.Role
+			return a.Name < b.Name
 		})
-		file.CompanionOf = slices.Compact(file.CompanionOf)
+		file.Declarations = slices.Compact(file.Declarations)
 		result.Files = append(result.Files, *file)
 	}
 	sort.Slice(result.Files, func(i, j int) bool { return result.Files[i].Path < result.Files[j].Path })
@@ -115,7 +115,7 @@ func locationLess(a, b diagnostic.Location) bool {
 }
 
 // collectFile records an existing file and, when reference is set, the link
-// that reaches it. A frontmatter companion link also records its role.
+// that reaches it. A catalog occurrence also identifies its declaration.
 func (r *Report) collectFile(path string, reference *specfile.Reference) {
 	if r.files == nil || path == "" {
 		return
@@ -128,7 +128,7 @@ func (r *Report) collectFile(path string, reference *specfile.Reference) {
 	}
 	file := r.files[path]
 	if file == nil {
-		file = &SourceFile{Path: path, ReferencedBy: []diagnostic.Location{}, CompanionOf: []SourceCompanion{}}
+		file = &SourceFile{Path: path, ReferencedBy: []diagnostic.Location{}, Declarations: []SourceDeclaration{}}
 		if p, err := specfile.FindProject(filepath.Dir(path)); err != nil {
 			r.record(err, "scan.context", path)
 		} else {
@@ -140,7 +140,7 @@ func (r *Report) collectFile(path string, reference *specfile.Reference) {
 		return
 	}
 	file.ReferencedBy = append(file.ReferencedBy, reference.Location)
-	if reference.Role != "" {
-		file.CompanionOf = append(file.CompanionOf, SourceCompanion{Role: reference.Role, Target: reference.Destination, Location: reference.Location})
+	if reference.Name != "" {
+		file.Declarations = append(file.Declarations, SourceDeclaration{Name: reference.Name, Defines: reference.Defines, VerifiedSpecification: reference.VerifiedSpecification, Source: reference.Destination, Location: reference.Location})
 	}
 }

@@ -1,10 +1,10 @@
 ---
 type: use-case-spec
 id: export-specification-model
-companions:
-  - target: ../../internal/integration/testdata/snapshot.txtar
-    role: illustrates
-    note: Export and offline validation
+specifications:
+  - name: Export and offline validation
+    defines: requirements
+    source: ../../internal/integration/testdata/snapshot.txtar
 ---
 
 # Export a specification snapshot

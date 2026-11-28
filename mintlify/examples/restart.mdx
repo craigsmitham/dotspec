@@ -15,7 +15,7 @@ Open **Preserve tasks across restart** and read **Statement** and **Conditions**
 
 Open the generated requirement report. Under **Criterion**, the target is zero discrepancies across Open, Waiting, and Completed. Finding a task with the expected title is only one observation. If the service created a new task with that title and lost the old one's identity, the result would still fail. [Read the generated criterion](/examples/restart-requirement#criterion).
 
-Under **Companions → Verified by**, follow **acceptance.py › verify**. The requirement's frontmatter names this function as its verification procedure. The report resolves that name to the definition. Under **Verification**, “No matching result recorded” means the report has no recorded run for that procedure. [Open the report at Companions](/examples/restart-requirement#companions).
+Under **Verification**, follow **Restart acceptance test**. The requirement's frontmatter names this function as its verification procedure. The report resolves that name to the definition. Under **Verification**, “No matching result recorded” means the report has no recorded run for that procedure. [Open the report at Verification](/examples/restart-requirement#verification).
 
 ## Run the two checks
 
@@ -25,7 +25,7 @@ From the root of a dotspec checkout with the alpha CLI on your path, inspect the
 dotspec check -C examples/todo
 ```
 
-This checks the authored files, resolves the named companion, and checks the generated specification for drift. To observe the running app, use the checkout's pinned Go and Python tools. From the same directory with mise installed, run:
+This checks the authored files, resolves the verification procedure, and checks the generated specification for drift. To observe the running app, use the checkout's pinned Go and Python tools. From the same directory with mise installed, run:
 
 ```sh
 mise trust

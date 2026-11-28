@@ -51,15 +51,9 @@ The [restart acceptance test](<../../tests/acceptance.py>) records entries in Op
 
 A list that loses track of earlier decisions forces the person to reconstruct them.
 
-## Companions
-
-**Verified by**
-
-- [acceptance.py › verify](<../../tests/acceptance.py#L148>) — Restart acceptance test; kills the service and compares each view's identities after it starts again
-
 ## Verification
 
-Procedure linked.
+- [Restart acceptance test](<../../tests/acceptance.py#L148>)
 
 No matching result recorded.
 

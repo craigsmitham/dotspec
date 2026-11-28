@@ -1,13 +1,9 @@
 ---
 type: use-case-spec
 id: build-generated-specification
-companions:
-  - target: ../../internal/integration/testdata/init.txtar
-    role: illustrates
-    note: A build without a project, a first build and the check that confirms it
-  - target: ../../scripts/check-example/check.py
-    role: illustrates
-    note: Rebuilding the To-do generated specification and following its links
+verification:
+  - name: Rebuilding the To-do generated specification and following its links
+    source: ../../scripts/check-example/check.py
 ---
 
 # Build the generated specification
@@ -118,3 +114,5 @@ Representative. Building and checking can repeat in any useful order.
 
 The [build command](../../docs/reference/cli.md#dotspec-build) and the linked
 generated specification requirement define command behavior.
+
+[A build without a project, a first build and the check that confirms it](../../internal/integration/testdata/init.txtar).

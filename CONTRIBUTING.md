@@ -161,27 +161,12 @@ come from the type packages. Edit those sources, then run `mise run generate`.
 
 ## Specification tests and implementation tests
 
-This repository keeps each product decision in the specification for its subject. When adding or changing a CLI example, identify the governing requirement, concept action, use case, or native interface contract. If the example introduces a product requirement, author its requirement file in the same change.
+Each product decision has one governing source. When a CLI example introduces required behavior, declare where that decision lives. The scripts in `internal/integration/testdata/*.txtar` own their example inputs, commands and expected observations. A subject can name a suite under `specifications` with its category and source. Other subjects can link to the same declaration or to a specific native definition. The [Command Invocation concept](internal/integration/specs/concepts/cli-interaction.concept.spec.md) links additional scripts beside the sources they exercise.
 
-- The scripts in `internal/integration/testdata/*.txtar` own their example inputs, commands and expected observations. They verify the public behavior of the specifications that list them as companions, or of the sources paired with them in Command Invocation.
-- `internal/cli/quality_contracts_test.go` checks the conditions and criteria in the quality requirements that list it as a companion.
-- Implementation tests can exercise private parser decisions and regressions. Changing the implementation can change these checks while preserving the specified behavior.
-
-Review changes to example assertions against their governing source. Update that source when the intended behavior changes.
-
-A specification lists its designated tests as companions in its frontmatter. Use
-`role: verifies` for a test that assesses the specification, or `role: illustrates`
-when an executable example is itself part of the specification. When the file holds several
-tests, name the one that applies in the fragment, such as `#TestInspectionQualityContracts`;
-a txtar script can be listed whole. Add a short note saying what it covers. Keep any account of what a
-test exercises under **Evidence**. For example, the
-[repeatable-inspection requirement](specs/quality/reliability/repeatability/repeatable-inspection.requirement.spec.md)
-lists its quality-contract test. Scripts that no specification lists yet are linked from the
-[Command Invocation concept](internal/integration/specs/concepts/cli-interaction.concept.spec.md),
-beside the sources they exercise. An entire directory link does not provide file coverage.
+Declare a test that assesses an existing promise under `verification`. For example, the [repeatable-inspection requirement](specs/quality/reliability/repeatability/repeatable-inspection.requirement.spec.md) names the corresponding function in `internal/cli/quality_contracts_test.go`. A verification result records a run against an identified revision and conditions. Implementation tests may change with private parser decisions or regressions while preserving the specified behavior.
 
 `mise run spec-sources-check` runs `scripts/check-spec-sources`, a repository-owned
-consumer of `dotspec sources --json`. The inventory includes companion targets as
+consumer of `dotspec sources --json`. The inventory includes named sources and procedures as
 well as links in the body, so the script sees tests listed either way. It selects
 the two sets above, requires a successful complete inventory, and fails with the
 missing paths. The same task runs in `mise run check` locally and in CI. The script

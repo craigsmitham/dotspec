@@ -134,7 +134,12 @@ func MapDomain(doc *ParsedDocument, kind string) Mapping {
 		m.markField(r, "preamble", doc.Preamble)
 	}
 	m.metadata(r)
-	m.companions(r)
+	catalog, err := doc.Syntax.Catalog(kind)
+	if err != nil {
+		m.parseFailure(err)
+		return m.result
+	}
+	m.catalog(r, catalog)
 	if glossarySources != nil {
 		r["glossary_source_paths"] = glossarySources
 	}
@@ -583,38 +588,27 @@ func (m *domainMapper) yamlContent(n *yaml.Node, flow bool, value string) string
 	return id
 }
 
-// companions maps each validated frontmatter entry to an owned Companion whose
-// target is an ordinary source reference, resolved like any authored link.
-func (m *domainMapper) companions(r Record) {
-	list := m.doc.Syntax.Value(specfile.CompanionsField)
-	if list == nil || list.Kind != yaml.SequenceNode {
-		return
-	}
-	r["companions"] = []string{}
-	for _, item := range list.Content {
-		if item.Kind != yaml.MappingNode {
-			continue
+// catalog keeps each source occurrence and its declaring owner together.
+func (m *domainMapper) catalog(owner Record, entries []specfile.CatalogEntry) {
+	for _, e := range entries {
+		kind, field := "VerificationProcedure", specfile.VerificationField
+		if e.Defines != "" {
+			kind, field = "SpecificationReference", specfile.SpecificationsField
 		}
-		flow := item.Style&yaml.FlowStyle != 0 || list.Style&yaml.FlowStyle != 0
-		values := map[string]*yaml.Node{}
-		for i := 0; i+1 < len(item.Content); i += 2 {
-			values[item.Content[i].Value] = item.Content[i+1]
+		entry := m.record(kind, String(owner, "id"))
+		name := m.yamlContent(e.Name, e.Flow, e.Name.Value)
+		entry["name"] = m.doc.Rich([]string{name})
+		if e.Defines != "" {
+			entry["defines"] = e.Defines
+			entry["anchor"] = specfile.SpecificationAnchor(e.Name.Value)
 		}
-		target, role := values["target"], values["role"]
-		if target == nil || role == nil {
-			continue
-		}
-		companion := m.record("Companion", String(r, "id"))
-		companion["role"] = role.Value
-		if note := values["note"]; note != nil && note.Value != "" {
-			companion["note"] = note.Value
-		}
-		node := m.yamlContent(target, flow, target.Value)
-		ref := Record{"id": fmt.Sprintf("reference:%s:companion:%d", String(m.doc.Source, "id"), len(m.doc.References)), "kind": "SourceReference", "source_document": m.doc.Source["id"], "content_node": node, "span": m.doc.NodeByID[node]["span"], "form": "frontmatter", "authored_target": target.Value}
+		node := m.yamlContent(e.Source, e.Flow, e.Source.Value)
+		ref := Record{"id": fmt.Sprintf("reference:%s:catalog:%d", String(m.doc.Source, "id"), len(m.doc.References)), "kind": "SourceReference", "source_document": m.doc.Source["id"], "content_node": node, "span": m.doc.NodeByID[node]["span"], "form": "frontmatter", "authored_target": e.Source.Value}
 		m.doc.References = append(m.doc.References, ref)
-		companion["target"] = ref["id"]
-		m.bindReferenceOccurrences(companion, "target", []string{String(ref, "id")})
-		appendID(r, "companions", String(companion, "id"))
+		entry["source"] = ref["id"]
+		m.bindReferenceOccurrences(entry, "source", []string{String(ref, "id")})
+		appendID(owner, field, String(entry, "id"))
+		m.catalog(entry, e.Verification)
 	}
 }
 

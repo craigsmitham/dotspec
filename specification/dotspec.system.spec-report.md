@@ -31,8 +31,8 @@ A requirements authoring framework and command-line toolkit for Markdown specifi
 <details>
 <summary>Browse specifications</summary>
 
-- [Companions](<companions.md>)
 - [Glossary](<glossary.md>)
+- [Specifications](<specifications.md>)
 
 </details>
 
@@ -123,17 +123,29 @@ arguments, standard streams, and exit statuses.
 
 ## Requirements
 
+- [Adoption into the nearest system, refusal of a declared attribute and parent reuse](<use-cases/adopt-quality-attribute.use-case.spec-report.md#specification.adoption-into-the-nearest-system-refusal-of-a-declared-attribute-and-parent-reuse>) *(Adopt a quality attribute for a system)*
+- [Advice on assumptions without Basis or Applicability and interfaces without a contract link](<use-cases/check-specifications.use-case.spec-report.md#specification.advice-on-assumptions-without-basis-or-applicability-and-interfaces-without-a-contract-link>) *(Check specifications before committing)*
 - [Advice permits a successful check](<requirements/advice-permits-success.requirement.spec-report.md>) — When a completed check reports only advisory findings, dotspec must return exit status zero.
 - [Continue checking after a structural error](<requirements/continue-after-invalid-spec.requirement.spec-report.md>) — When a discovered specification contains a structural error, dotspec must continue inspecting the remaining discovered specifications.
+- [Create and inspect](<use-cases/create-specification.use-case.spec-report.md#specification.create-and-inspect>) *(Create a specification draft)*
 - [Diagnostic severity is available without styling](<requirements/diagnostic-severity.requirement.spec-report.md>) — Every diagnostic must identify its severity using a text label independently of terminal styling.
+- [Diagnostics and exit statuses](<use-cases/check-specifications.use-case.spec-report.md#specification.diagnostics-and-exit-statuses>) *(Check specifications before committing)*
+- [Export and offline validation](<use-cases/export-specification-model.use-case.spec-report.md#specification.export-and-offline-validation>) *(Export a specification snapshot)*
 - [Find authoring guidance in the installed CLI](<requirements/find-authoring-guidance-in-the-installed-cli.requirement.spec-report.md>) — A contributor must be able to reach the relevant versioned guidance from a specification type, a question in their own words, or a mapped diagnostic, then read the selected page, section, or worked example offline. …
+- [Find the governing source of a product decision](<requirements/find-the-governing-source-of-a-product-decision.requirement.spec-report.md>) — An author must be able to specify behavior in Markdown or name the source that governs it in its native form. …
+- [Focused and project-wide checks of draft and malformed use cases](<use-cases/check-specifications.use-case.spec-report.md#specification.focused-and-project-wide-checks-of-draft-and-malformed-use-cases>) *(Check specifications before committing)*
+- [Help, redirected output, completions and manual](<requirements/find-authoring-guidance-in-the-installed-cli.requirement.spec-report.md#specification.help-redirected-output-completions-and-manual>) *(Find authoring guidance in the installed CLI)*
 - [Inspection preserves source material](<requirements/inspection-preserves-source.requirement.spec-report.md>) — Inspection must leave source-file contents and paths unchanged, without creating, deleting, or renaming source files.
 - [Isolate specification projects in a workspace](<requirements/isolate-specification-projects-in-a-workspace.requirement.spec-report.md>) — Each dotspec.yaml declares the name of the specification project rooted in its directory. …
-- [List the companions that carry a specification's intent](<requirements/list-the-companions-that-carry-a-specification-s-intent.requirement.spec-report.md>) — An author must be able to list, in a specification's frontmatter, each artifact that carries part of its intent in another form, such as a formal model, an executable example, a test or an explanatory document, …
+- [Offline guidance](<requirements/find-authoring-guidance-in-the-installed-cli.requirement.spec-report.md#specification.offline-guidance>) *(Find authoring guidance in the installed CLI)*
 - [Preserve source and represented content in specification snapshots](<requirements/model-source-fidelity.requirement.spec-report.md>) — Export must preserve the meaning and order of authored Markdown, including conditions, criteria, reference destinations, and the locations of unsupported or malformed content. …
+- [Preview, bundled and local models, and a term with two parents](<use-cases/adopt-quality-attribute.use-case.spec-report.md#specification.preview-bundled-and-local-models-and-a-term-with-two-parents>) *(Adopt a quality attribute for a system)*
 - [Read and verify the generated requirements specification](<requirements/read-and-verify-the-generated-requirements-specification.requirement.spec-report.md>) — For a project with one root system and the generated specification enabled, contributors must be able to generate a deterministic Markdown requirements specification and check its fidelity, navigation, and freshness with the project-wide check. …
 - [Reject initialization at an existing target](<requirements/reject-existing-target.requirement.spec-report.md>) — When the target path already exists, initialization must terminate with an unsuccessful exit status.
 - [Repeated inspections produce equivalent reports](<requirements/repeatable-inspection.requirement.spec-report.md>) — Repeated inspections must produce equivalent structured reports, including the ordering of array elements.
+- [Repository discovery](<use-cases/check-specifications.use-case.spec-report.md#specification.repository-discovery>) *(Check specifications before committing)*
+- [Source inventory and incoming declarations](<use-cases/discover-specification-sources.use-case.spec-report.md#specification.source-inventory-and-incoming-declarations>) *(Discover specification sources)*
+- [Starting a project, refusing to overwrite, and starting one inside another](<use-cases/start-specification-project.use-case.spec-report.md#specification.starting-a-project-refusing-to-overwrite-and-starting-one-inside-another>) *(Start a specification project)*
 
 ## Concepts
 

@@ -37,7 +37,7 @@ Someone who has already called three shops needs to know which call to make agai
 
 ## Evidence
 
-The [form acceptance test](<../../tests/acceptance.py>) checks the reply, date and cue for entries dated before, on and after today. On Unix it also opens the same saved entry with the service in two time zones. The reply and date stay the same while its cue changes from **Upcoming** to **Follow up now**.
+The [form acceptance test](<../../tests/acceptance.py>) checks the reply, date and cue for entries dated before, on and after today. The [time-zone cases](<../quality/durability/durability.quality-attribute.spec-report.md#specification.saved-follow-up-dates-across-time-zones>) cover returning to a saved list on a different local day.
 
 ## Related specifications
 

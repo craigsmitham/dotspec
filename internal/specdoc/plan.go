@@ -68,18 +68,18 @@ type subject struct {
 }
 
 type planner struct {
-	evidence        model.VerificationEvidence
-	assessments     map[string][]*model.ProcedureAssessment
-	companions      map[string][]companionView // by subject record
-	root            string
-	snapshot        *model.Snapshot
-	plan            *Plan
-	sources         map[string]*sourceFile
-	nodes, elements map[string]model.Record
-	pages           map[string]*subject
-	subjects        []*subject
-	targets         map[string]string // snapshot record, source, or fragment to canonical project-relative URL
-	governing       *subject
+	evidence          model.VerificationEvidence
+	assessments       map[string]*model.ProcedureAssessment
+	catalogReferences map[string]model.Record
+	root              string
+	snapshot          *model.Snapshot
+	plan              *Plan
+	sources           map[string]*sourceFile
+	nodes, elements   map[string]model.Record
+	pages             map[string]*subject
+	subjects          []*subject
+	targets           map[string]string // snapshot record, source, or fragment to canonical project-relative URL
+	governing         *subject
 
 	glossaryTargets map[string]map[string]string // scoped routes for terms shared between systems
 	routes          map[string][]route
@@ -504,8 +504,7 @@ func (p *planner) indexTargets() {
 	}
 	p.indexConceptDefinitions()
 	p.indexOpenQuestions()
-	p.readCompanions()
-	p.indexCompanions()
+	p.indexSpecifications()
 	for _, s := range p.subjects {
 		if s.kind() == "System" {
 			p.planGlossary(s)

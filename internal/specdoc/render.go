@@ -170,9 +170,9 @@ func (p *planner) renderSubject(s *subject) {
 		p.renderOverview(w, s)
 	} else {
 		p.renderSubjectBody(w, s)
-		p.renderCompanions(w, s)
-		p.renderVerification(w, s)
 	}
+	p.renderSpecifications(w, s)
+	p.renderAssessment(w, s, s.r, "## Verification")
 	if s.section("Related specifications") == nil {
 		p.relationships(w, s.name, true)
 	}

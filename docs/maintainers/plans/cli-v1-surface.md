@@ -355,7 +355,7 @@ Inspect
                                                     the generated specification is current
   dotspec list <kind>                               every kind above, project files only; grouped by system;
                                                     list system | list component print the structural tree
-  dotspec sources [<path>]                          specifications, companions, context and referenced files
+  dotspec sources [<path>]                          specifications, procedures, context and referenced files
 
 Publish
   dotspec build                                     SPEC.md + specification/ for the enclosing project
@@ -578,7 +578,7 @@ Each step is a separate change. Each one updates its own specs, handbook, txtar,
       - The discover "same slug" extension and the specification-inspection concept.
       - New list and adoption use cases.
 11. **Text output.** Findings-first check, the blocked-build message, `sources` grouping, no `None`, relative text paths, and quality-model names without enum strings.
-12. **Later, additive.** Companion roles in `sources` text and JSON.
+12. **Later, additive.** Specification declarations in `sources` text and JSON.
 
 ## Appendix: dropped findings and recommendation parts
 

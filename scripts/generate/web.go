@@ -18,7 +18,7 @@ import (
 const handbookDir = "docs/cli-handbook/guides/"
 const githubSource = "https://github.com/dotspec-md/dotspec/blob/main/"
 
-var publishedGuides = []string{"describe-a-system", "write-an-assessable-requirement", "list-a-companion"}
+var publishedGuides = []string{"describe-a-system", "write-an-assessable-requirement", "catalog-a-specification"}
 
 func webPages(commands *cobra.Command) ([]generatedFile, error) {
 	var pages []generatedFile

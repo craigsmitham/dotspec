@@ -79,7 +79,7 @@ func TestExportRecordsNativeDefinitionLine(t *testing.T) {
 		t.Fatal(err)
 	}
 	files := map[string]string{
-		"specs/concepts/queue.concept.spec.md": "---\ntype: concept-spec\ncompanions:\n  - target: ../../queue.qnt#inv\n    role: formalizes\n  - target: ../../queue.qnt#missing\n    role: verifies\n---\n# Queue\n## Purpose\nOrder work.\n## State\nItems.\n## Actions\n### Push\n## Operational principles\nFirst in, first out.\n",
+		"specs/concepts/queue.concept.spec.md": "---\ntype: concept-spec\nspecifications:\n  - source: ../../queue.qnt#inv\n    defines: requirements\n    name: Queue invariant\nverification:\n  - source: ../../queue.qnt#missing\n    name: Queue check\n---\n# Queue\n## Purpose\nOrder work.\n## State\nItems.\n## Actions\n### Push\n## Operational principles\nFirst in, first out.\n",
 		"queue.qnt":                            "module queue {\n  val inv = true\n}\n",
 	}
 	for path, data := range files {

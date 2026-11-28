@@ -62,7 +62,7 @@ func TestProductChangesAndVerificationObservations(t *testing.T) {
 	if text := read("specification/tool.system.spec-report.md"); !strings.Contains(text, "## Quality Attributes") || !strings.Contains(text, "Preserve an acknowledged change.") {
 		t.Fatal(text)
 	}
-	const body = "---\ntype: requirement-spec\nquality_attributes: [continuity]\ncompanions:\n  - target: ../../tests/restart.sh\n    role: verifies\n  - target: ../../protocol.md#restart\n    role: verifies\n    note: Manual restart protocol\n---\n# Recover\n\n## Statement\nRestore acknowledged work.\n\n## Criterion\nThe saved value survives restart.\n\n## Evidence\n[Citation](../../protocol.md#restart).\n"
+	const body = "---\ntype: requirement-spec\nquality_attributes: [continuity]\nverification:\n  - source: ../../tests/restart.sh\n    name: Restart script\n  - source: ../../protocol.md#restart\n    name: Manual restart protocol\n---\n# Recover\n\n## Statement\nRestore acknowledged work.\n\n## Criterion\nThe saved value survives restart.\n\n## Evidence\n[Citation](../../protocol.md#restart).\n"
 	writeFixture(t, req, body)
 	before := product()
 	if !before.Complete || len(before.Members) != 3 || len(before.Adoptions) != 0 {
@@ -78,7 +78,7 @@ func TestProductChangesAndVerificationObservations(t *testing.T) {
 	}
 	run("build")
 	const report = "specification/requirements/recover.requirement.spec-report.md"
-	if text := read(report); !strings.Contains(text, "Procedure linked.") || !strings.Contains(text, "No matching result recorded.") || !strings.Contains(text, "After acknowledged writes.") {
+	if text := read(report); !strings.Contains(text, "Manual restart protocol") || !strings.Contains(text, "No matching result recorded.") || !strings.Contains(text, "After acknowledged writes.") {
 		t.Fatal(text)
 	}
 	if !strings.Contains(read("specification/quality/continuity/continuity.quality-attribute.spec-report.md"), "recover.requirement.spec-report.md") {
@@ -160,7 +160,8 @@ func TestProductWithStructuralParentInAnotherProject(t *testing.T) {
 
 func TestLocallyAuthoredRequirementForExternalSystem(t *testing.T) {
 	projectFixture(t)
-	writeFixture(t, "specs/requirements/remote.requirement.spec.md", "---\ntype: requirement-spec\n---\n# Remote\n## Specification system\n[Demo](../../apps/demo/specs/demo.system.spec.md)\n## Statement\nNotify an operator.\n")
+	writeFixture(t, "alerts.csv", "event,action\nerror,notify\n")
+	writeFixture(t, "specs/requirements/remote.requirement.spec.md", "---\ntype: requirement-spec\nspecifications:\n  - {name: Alert rules, source: ../../alerts.csv, defines: requirements}\n---\n# Remote\n## Specification system\n[Demo](../../apps/demo/specs/demo.system.spec.md)\n## Statement\nNotify an operator.\n")
 	for _, args := range [][]string{{"build"}, {"check"}} {
 		if code, out, errs := invoke(args...); code != 0 {
 			t.Fatal(args, out, errs)
@@ -170,7 +171,7 @@ func TestLocallyAuthoredRequirementForExternalSystem(t *testing.T) {
 		t.Fatal(v)
 	}
 	index, err := os.ReadFile("specification/requirements-for-other-systems.md")
-	if err != nil || !strings.Contains(string(index), "remote.requirement.spec-report.md") {
+	if err != nil || !strings.Contains(string(index), "remote.requirement.spec-report.md") || !strings.Contains(string(index), "#specification.alert-rules") {
 		t.Fatal(err, string(index))
 	}
 }

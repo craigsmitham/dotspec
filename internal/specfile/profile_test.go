@@ -48,14 +48,14 @@ func TestSectionSlotAcceptsThePinnedHeadings(t *testing.T) {
 	for title := range irregularHeadings {
 		titles[title] = true
 	}
-	for _, slots := range classSlots() {
+	for _, slots := range schemaCatalog().Classes {
 		for slot := range slots.Slots {
 			title := sentenceCase(slot)
 			titles[title], titles[slot], titles[strings.ToLower(title)], titles[strings.ToUpper(title)] = true, true, true, true
 		}
 	}
 	var got []string
-	for class := range classSlots() {
+	for class := range schemaCatalog().Classes {
 		for title := range titles {
 			if _, ok := SectionSlot(class, title); ok {
 				got = append(got, class+"\t"+title)

@@ -1,13 +1,13 @@
 ---
 type: use-case-spec
 id: discover-specification-sources
-companions:
-  - target: ../../internal/integration/testdata/sources.txtar
-    role: illustrates
-    note: Source discovery through ordinary references and companions
-  - target: ../../internal/cli/kinds_test.go
-    role: illustrates
-    note: Lists of every specification kind, grouped by system
+specifications:
+  - name: Source inventory and incoming declarations
+    defines: requirements
+    source: ../../internal/integration/testdata/sources.txtar
+verification:
+  - name: Lists of every specification kind, grouped by system
+    source: ../../internal/cli/kinds_test.go
 ---
 
 # Discover specification sources
@@ -31,8 +31,8 @@ User task (sea).
 ## Success guarantees
 
 The contributor receives a complete source inventory for the selected scope,
-including findings about unresolved references and, for each file a specification
-lists as a companion, the declaring specification and the role it states. They can
+including findings about unresolved references and the locations and names of
+declarations and procedures that point to each file. They can
 follow the reported paths to consult the original files in their native form.
 
 ## Main success scenario

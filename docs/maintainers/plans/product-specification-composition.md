@@ -44,7 +44,7 @@ For example, an interface could adopt the named cancellation clause of a partner
 
 ## 4. Report procedures and observations independently
 
-A requirement owns its criterion for acceptance. A **verification procedure** describes how someone can assess it. A **verification result** records what happened on one occasion. List each procedure as a `verifies` companion in the requirement’s frontmatter. Keep ordinary **Evidence** prose available for rationale, witnesses, and observations. Give a procedure a linkable identity even when it lives in a test suite or manual protocol. [Companions](../../../model/markdown-mapping.md#companions)
+A requirement owns its criterion for acceptance. A **verification procedure** describes how someone can assess it. A **verification result** records what happened on one occasion. List each procedure under the subject’s verification frontmatter. Keep ordinary **Evidence** prose available for rationale, witnesses, and observations. Give a procedure a linkable identity even when it lives in a test suite or manual protocol. [Specification catalog](../../../model/markdown-mapping.md#specification-catalog)
 
 Accept a result from its evidence source with the requirement, procedure, outcome, assessed product revision, relevant conditions, and a reference to the observation. Record the specification revision assessed when known. Keep results outside specification aggregates so recording a run does not revise product intent. Preserve multiple observations, including conflicting runs. A missing revision or mismatched condition limits the claim a report can make.
 

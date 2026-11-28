@@ -9,8 +9,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Companions are authored in the frontmatter of every specification type.
-var crossCuttingTopics = map[string]bool{"companion": true}
+// Specification sources are authored in the frontmatter of every specification type.
+var crossCuttingTopics = map[string]bool{"catalog": true}
 
 func TestHandbookTopicsMatchAuthoredDocumentTypes(t *testing.T) {
 	missing := map[string]bool{}

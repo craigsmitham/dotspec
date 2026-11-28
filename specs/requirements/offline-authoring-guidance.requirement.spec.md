@@ -1,13 +1,13 @@
 ---
 type: requirement-spec
 quality_attributes: [usability]
-companions:
-  - target: ../../internal/integration/testdata/docs.txtar
-    role: illustrates
-    note: Offline guidance
-  - target: ../../internal/integration/testdata/help.txtar
-    role: illustrates
-    note: Help, redirected output, completions and manual
+specifications:
+  - name: Offline guidance
+    defines: requirements
+    source: ../../internal/integration/testdata/docs.txtar
+  - name: Help, redirected output, completions and manual
+    defines: requirements
+    source: ../../internal/integration/testdata/help.txtar
 ---
 # Find authoring guidance in the installed CLI
 

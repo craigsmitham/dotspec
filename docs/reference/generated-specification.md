@@ -41,12 +41,12 @@ Commit the authored changes, `SPEC.md` and the generated Markdown in `specificat
 | `specification/glossary.md` | Alphabetical definitions linked to their sources, a topic index when terms declare topics, context names for distinct meanings, and links back to authored relationships |
 | `specification/quality/<attribute>/<attribute>.quality-attribute.spec-report.md` | One system attribute, its definition, parent and child attributes, and classified requirements |
 | `specification/systems/<child>/<child>.system.spec-report.md` | Child system report with its own local directories |
-| `specification/companions.md` | Every companion listed in the system, grouped by role, each with a link to the subject that declares it. The index appears under **Browse specifications** when at least one specification lists a companion. |
+| `specification/specifications.md` | Named native specifications and authored subjects in the system, with links to their declarations. |
 | `specification/open-questions.md` | Questions recorded across the project, each with its subject and a link to the passage. The index appears when at least one authored question exists. |
 
 ### Navigate a system or component report
 
-System and component reports open with the subject name, authored description, and a linked section map. Component reports also show their purpose, overview, responsibilities, contracts, architecture, implementation, and companions where authored.
+System and component reports open with the subject name, authored description, and a linked section map. Component reports also show their purpose, overview, responsibilities, contracts, architecture, implementation, and specification sources where authored.
 Expand **On this page** to jump to a section in reading order. On a system report, **Intent**, **Context**, **Behavior** and **Design** bring related links together. Choose **Quality Attributes** or **Requirements** directly between Behavior and Design. Only populated sections appear. **Browse specifications** appears when a collection has a separate index. To edit the report’s authored content, follow **View source** at the foot of the report.
 
 | Section | What you can find |
@@ -69,7 +69,6 @@ Expand **On this page** to jump to a section in reading order. On a system repor
 | Concepts | Local definitions and definitions referenced by scoped uses, with their authored purpose. Each named use appears beneath its definition, after *Uses:*. Open a use for its configuration and the specifications that apply to it. |
 | Synchronizations | Authored coordination between concept uses. |
 | Architecture | The system boundary and its immediate subsystems and components, the interfaces it offers or uses, and its declared interactions |
-| Companions | Artifacts the system specification itself lists, such as a formal model or an acceptance test, grouped by role with each author’s note |
 | Open questions | Decisions that remain open in the system specification |
 | Glossary | Terms defined for this system and links to their definitions |
 | Project references | Authored explanations and links to delivery plans, responsibilities, risks and decisions, when supplied |
@@ -121,33 +120,9 @@ Above the title, breadcrumbs lead to the owning system or component and the subj
 
 On subject reports, collections that only provide navigation appear with the page’s index links. Sections with authored descriptions keep that text in the body. A component’s `requirements.md` includes requirements declared in its component hierarchy and those that explicitly apply there. Each entry links directly to its requirement.
 
-### Follow a companion
+### Find a governing source
 
-A subject report gains a **Companions** section when its specification lists companions in its frontmatter. Entries are grouped under **Formalized by**, **Illustrated by**, **Verified by** and **Explained by**. Each entry names the file, then ` › ` and the definition when the target names one, then the author’s note after ` — `. A named definition in a supported format, such as a Quint `val` or a Python `def`, links to its declaring line as `#L<n>`. A companion that is itself a Markdown specification links to its report page. System and component reports list their own companions, and the section appears in **On this page**.
-
-For example, the restart requirement report lists `acceptance.py › verify` under **Verified by**, with the note that the test kills the service and compares each view’s identities after it starts again. The link opens the `verify` function in the acceptance test. [Restart requirement report](../../examples/todo/specification/requirements/preserve-tasks-across-restart.requirement.spec-report.md#companions)
-
-To review every artifact that carries part of the system’s intent, open **Browse specifications → Companions** on the outermost system report. `companions.md` groups every companion in the system by role and links each to the subject that declares it. [To-do companions](../../examples/todo/specification/companions.md) · [Companion mapping](../../model/markdown-mapping.md#companions)
-
-Each standalone authored specification in the selected project has exactly one standalone report page. The owning system or component links to its features and capabilities. Inline subjects can also have a report page for their own heading.
-
-Authored Markdown uses `<subject>-spec`. The corresponding generated Markdown
-uses `<subject>-spec-report`. For example, `<name>.system.spec.md` declares
-`type: system-spec`, and its generated `<name>.system.spec-report.md` declares `type: system-spec-report`.
-
-Each subject report records its source in a YAML `source` field using a URI
-relative to the report, including the fragment for the exact authored heading.
-For example, the todo system report declares
-`source: "../specs/personal-task-list.system.spec.md#personal-task-list"`.
-Every subject report has one **View source** link in its footer. It opens the heading recorded in `source`. For a subject defined inside
-another spec, the fragment identifies its nested heading.
-
-The footer also covers embedded declarations from the same file, such as **List owner** in the To-do system report. Each declaration retains its type and exact source heading in a `dotspec-doc` comment.
-
-On a page that presents full passages, the first passage from each additional file carries **View section source**, or **Term source** for a glossary entry. Later passages from that file share the link. Short previews link to their subject reports. Authored citations and evidence links stay with the passages they support. The topic index jumps to term headings, and incoming relationship links return to the passage that describes the connection.
-
-Each system quality attribute has a `system-quality-attribute-spec-report` page. Reusable quality model entries remain sections of the model’s report. The file’s `generated_by: dotspec` marker identifies generator
-ownership. See the [document model](model/index.md#generateddocument).
+Open **Browse specifications → Specifications** on the outermost system report, or open the collection for the category a source defines. Follow the named declaration to its owning subject and then its native source. The Verification section beside a promise lists its procedures. [Restart verification](../../examples/todo/specification/requirements/preserve-tasks-across-restart.requirement.spec-report.md#verification)
 
 ## Check a workspace
 
@@ -157,7 +132,7 @@ For early feedback, add `dotspec check --all` to a pre-push hook. Use CI to veri
 
 ## Record verification results
 
-List each test or manual protocol as a companion of its requirement with `role: verifies`. Keep any account of what the procedure exercises under **Evidence**. After a run, an evidence producer can supply `verification-results.json` in the project root. Running `dotspec build` reads this file and publishes observations in the requirement’s **Verification** section. Running `dotspec check` checks the resulting report. The requirement file changes only when the authored decision changes.
+List each test or manual protocol under the subject’s `verification`. Keep any account of what the procedure exercises under **Evidence**. After a run, an evidence producer can supply `verification-results.json` in the project root. Running `dotspec build` reads this file and publishes observations in the requirement’s **Verification** section. Running `dotspec check` checks the resulting report. The requirement file changes only when the authored decision changes.
 
 This illustrative file requests the results of a restart assessment for revision `build-42`. Replace the revision, conditions, and observation address with the ones from your run.
 
@@ -180,4 +155,4 @@ This illustrative file requests the results of a restart assessment for revision
 }
 ```
 
-Identify the subject by its project-relative requirement URI, without a fragment. Identify the procedure by the companion’s target resolved against the project root, including any fragment. The restart requirement lists `../../tests/acceptance.py#verify`, so its results name `tests/acceptance.py#verify`. Relative observation URIs also start at the project root. Use `pass`, `fail`, or `inconclusive` for the outcome. A run matches when its procedure is a `verifies` companion of that requirement and its product revision and conditions equal the selection. Either record can also carry `specification_revision`. Supplying it in the selection requires an exact match. An unknown product revision or unknown conditions leave an observation outside the matching set. Use an empty results array for a selection with no observations yet. A report preserves competing results and their individual observation links.
+Identify the subject by its declaring Markdown URI, appending the specification anchor for a native subject. Identify the procedure by the procedure’s source resolved against the project root, including any fragment. The restart requirement lists `../../tests/acceptance.py#verify`, so its results name `tests/acceptance.py#verify`. Relative observation URIs also start at the project root. Use `pass`, `fail`, or `inconclusive` for the outcome. A run matches when its procedure is declared for the subject or is the native subject itself and its product revision and conditions equal the selection. Either record can also carry `specification_revision`. Supplying it in the selection requires an exact match. An unknown product revision or unknown conditions leave an observation outside the matching set. Use an empty results array for a selection with no observations yet. A report preserves competing results and their individual observation links.
